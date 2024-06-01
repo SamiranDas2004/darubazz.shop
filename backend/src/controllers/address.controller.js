@@ -1,25 +1,41 @@
-import Address from "../models/address.model";
+import Address from "../models/address.model.js";
+import User from "../models/user.model.js";
 
-export const Address =async(req,res)=>{
-    const {username,state,city,zipcode,locatioon}=req.body
+export const createAddress = async (req, res) => {
+    try {
+        const { username, state, city, zipcode, location } = req.body;
+
+        // Check if any required field is missing
+        if (!username || !state || !city || !zipcode || !location) {
+            return res.status(400).json({ message: "All fields are required" });
+        }
+
+        // Find the user by username
+        const findUser = await User.findOne({ username });
+        if (!findUser) {
+            return res.status(404).json("User not found");
+        }
+
+        // Create the address
+        const address = await Address.create({
+            userId: findUser._id,
+            username,
+            state,
+            city,
+            zipcode,
+            location
+        });
+
+        // Check if the address was successfully created
+        if (!address) {
+            return res.status(500).json({ message: "Failed to create address" });
+        }
+
+        return res.status(201).json({ message: "User address created successfully", address });
+    } catch (error) {
+        console.error("Error creating address:", error); // Log the error for debugging
+        throw new Error(error.message)
+    }
+};
 
 
-if (!(username && state && city && zipcode && locatioon)) {
-    return res.status(400).json("have to fill all the fields")
-}
-const address=await Address.create({
-    username,city,zipcode,locatioon
-})
-
-
-if (!address) {
-    return res.status(401).json(" failed to create address")
-}
-
-return res.status(200).json("user address",address)
-
-}
-
-export const updateAddress=async(req,res)=>{
-    const {username}=req.params
-}

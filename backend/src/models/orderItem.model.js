@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const OderItemSchema=mongoose.Schema({
-    product:{
+    productId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"products"
     },
@@ -17,7 +17,7 @@ const OderItemSchema=mongoose.Schema({
     status:{
         type:String,
         default:"pending"
-    }
+    },
 
 },
     {timestamps:true})

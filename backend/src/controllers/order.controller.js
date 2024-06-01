@@ -1,33 +1,36 @@
-import OrderItem from "../models/orderItem.model";
-import Product from "../models/product.model";
-export const createOrder = async (req, res) => {
-  const { orderId } = req.params;
+import OrderItem from "../models/orderItem.model.js";
+import Product from "../models/product.model.js";
 
-  const Item = await Product.findOne({ orderId });
 
-  if (!Item) {
-    return res.status(401).json("can't find the product by the ID");
+export const createOrderItem = async (req, res) => {
+  const { orderId } = req.params; // Extract productId from URL parameters
+
+
+  try {
+      // Fetch the product to ensure it exists
+      const product = await Product.findById(orderId);
+      if (!product) {
+          return res.status(404).json({ message: "Product not found" });
+      }
+
+      // Create the order item
+      const orderItem = new OrderItem({
+          productId: product._id,
+          price:product.price,
+          brand:product.brand,
+          productname:product.productname,
+          status: "order conform" // Default status, can be omitted since default is set in schema
+      });
+
+      // Save the order item to the database
+      const savedOrderItem = await orderItem.save();
+
+      return res.status(201).json({ message: "Order item created successfully", orderItem: savedOrderItem });
+  } catch (error) {
+      return res.status(500).json({ message: "An error occurred", error });
   }
-
-  const { productname, price, brand } = Item;
-
-  if (!(productname && price && brand)) {
-    return res.status(403).json("can't featch the product details from the Item")  
-}
-
-  const newOrder = await OrderItem.create({
-    productname,
-    price,
-    brand,
-    status:"confirm order"
-  });
-
-  if (!newOrder) {
-    return res.status(401).json("Order is not created")
-  }
-
-  return res.status(200).json(" successfully ordered the item")
 };
+
 
 export const cancelOrder=async(req,res)=>{
     const{orderId}=req.params
@@ -40,6 +43,6 @@ export const cancelOrder=async(req,res)=>{
         return res.status(402).json("cant find the order with this id")
     }
 
-return res.status(200).json(" order deleted successfully ")
+return res.status(200).json(" cancel order successfully ")
 }
 

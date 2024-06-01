@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 const AddressSchema=mongoose.Schema({
+    userId:{
+type:mongoose.Schema.Types.ObjectId,
+ref:'users'
+    },
     username:{
        type:String
        
@@ -15,7 +19,7 @@ const AddressSchema=mongoose.Schema({
         type:Number
     },
     locatioon:{
-        type:string
+        type:String
     }
 },{
     timestamps:true

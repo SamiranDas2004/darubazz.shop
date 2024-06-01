@@ -112,6 +112,7 @@ user.save()
 
 export const logout = (req, res) => {
   try {
+    console.log("in logout");
     res.clearCookie('token', { httpOnly: true, secure: true, sameSite: 'strict' });
     return res.status(200).json({ message: "User logged out successfully" });
   } catch (error) {
