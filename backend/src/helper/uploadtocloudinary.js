@@ -1,13 +1,12 @@
 import {v2 as cloudinary} from 'cloudinary';
-        import fs, { unlink } from 'fs'
-        
-        
-cloudinary.config({ 
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
-  api_key: process.env.CLOUDINARY_API_KEY_, 
-  api_secret: process.env.CLOUDINARY_API_SECRET 
-});
-
+        import fs from 'fs'
+      
+          
+        cloudinary.config({ 
+          cloud_name: 'dfjfjovut', 
+          api_key: '149544752172973', 
+          api_secret: 'U5ItBKdO8hDIamslh1OAufRco_k' 
+        });
 
 export const uploadOnCloudinary=async(localpath)=>{
 try {
@@ -20,11 +19,11 @@ try {
         })
     
         console.log(response);
-        // unlink.unlinkSync(localpath)
+        fs.unlinkSync(localpath)
         return response
 } catch (error) {
     fs.unlinkSync(localpath)
-    return null
+   throw new Error(error.message)
 }
 
 }

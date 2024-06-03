@@ -5,14 +5,8 @@ import { upload } from "../helper/multermiddleware.js";
 
 const productRouter=Router()
 
-productRouter.route("/createProduct").post
-(upload.fields([
-    {
-        name:"productImage",
-        maxCount:1
-    }
-])
-,createProduct)
+productRouter.route('/createProduct').post(upload.single('imageUrl'), createProduct);
+
 productRouter.route("/findbyid/:productId").get(findbyid);
 productRouter.route('/update/:productId').put(updateProduct);
 productRouter.route('/delete/:productId').delete(deleteProduct)

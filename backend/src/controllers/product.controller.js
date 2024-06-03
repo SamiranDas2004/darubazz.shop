@@ -1,37 +1,50 @@
 import Product from "../models/product.model.js";
 import { uploadOnCloudinary } from "../helper/uploadtocloudinary.js";
 
+export const createProduct = async (req, res) => {
+  try {
+      if (!req.body) {
+          return res.status(400).json({ message: "Request body is empty" });
+      }
 
-export const createProduct=async(req,res)=>{
-   try {
-     const {productname,price,category,brand}=req.body
-     console.log(req.files);
-    const imagePath= req.files?.productImage[0]?.path
-if (!imagePath) {
-  return res.status(409).json("image was not uploaded")
-}
+      const { productname, price, category, brand } = req.body;
 
-const imageUrl=await uploadOnCloudinary(imagePath)
-   
-if (!imageUrl) {
-  return res.status(409).json("fauled to upload on cloudinary")
-}
-   const product=  await Product.create({
-         productname,price,category,brand,imageUrl
-     })
-     
-     if (!product) {
-       return  res.status(401).json("product creation was failed")
-       }
- 
-       product.save()
- 
-       return res.status(200).json(product)
-   } catch (error) {
-   throw new Error(error.message) 
-   }
+      if (!productname || !price || !category || !brand) {
+          return res.status(400).json({ message: "All fields (productname, price, category, brand) are required" });
+      }
 
-}
+      const imagePath = req.file?.path;
+      if (!imagePath) {
+          return res.status(409).json("Image was not uploaded");
+      }
+
+      const uploadResult = await uploadOnCloudinary(imagePath);
+      const imageUrl = uploadResult.secure_url;  // Extract the secure_url
+
+      if (!imageUrl) {
+          return res.status(409).json("Failed to upload on cloudinary");
+      }
+
+      const product = await Product.create({
+          productname,
+          price,
+          category,
+          brand,
+          imageUrl
+      });
+
+      if (!product) {
+          return res.status(401).json("Product creation failed");
+      }
+
+      return res.status(200).json(product);
+  } catch (error) {
+      return res.status(500).json({ message: "An error occurred", error: error.message });
+  }
+};
+
+
+
 
 
 export const findbyid = async (req, res) => {
@@ -44,7 +57,7 @@ export const findbyid = async (req, res) => {
       return res.status(400).json({ message: "Can't find the product with the given ID" });
     }
 
-    return res.status(200).json({ message: "Found product with the given ID", product });
+    return res.status(200).send(product);
   } catch (error) {
     return res.status(500).json({ message: "An error occurred", error });
   }
