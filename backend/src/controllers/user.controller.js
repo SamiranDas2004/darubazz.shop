@@ -26,10 +26,10 @@ try {
     
     const hashedPassword=await bcrypt.hash(password,10)
     const userExists=await User.findOne({
-        $or: [{ username }, { email }],
+       username
     })
     if (userExists) {
-       return res.send("user already exist")
+       return res.status(409).json("user already exist")
     }
     
    const user= await User.create({

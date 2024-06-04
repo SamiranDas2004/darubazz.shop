@@ -77,7 +77,7 @@ function AllProducts() {
               <img src={product.imageUrl} alt={product.productname} className="w-full h-auto" />
               <h3 className="text-xl font-bold">{product.productname}</h3>
               <p><strong>Brand:</strong> {product.brand}</p>
-              <p><strong>Price:</strong> ${product.price}</p>
+              <p><strong>Price:</strong> {product.price}</p>
               <p><strong>Category:</strong> {product.category}</p>
             
             </div>

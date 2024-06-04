@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 function Order() {
   const [order, setOrder] = useState(null); // Use null as initial state
   const { id } = useParams(); // Call useParams as a function
+  const navigate=useNavigate()
+
+
+  const handelNavigate=()=>{
+    navigate('/order/address')
+  }
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -25,15 +31,21 @@ function Order() {
   }
 
   return (
-    <div>
-      {order.imageUrl && <img src={order.imageUrl} alt={order.productname} />}
-      <h2>Order Details</h2>
-      <p><strong>Product Name:</strong> {order.productname}</p>
-      <p><strong>Price:</strong> ${order.price}</p>
-      <p><strong>Brand:</strong> {order.brand}</p>
-      <p><strong>Category:</strong> {order.category}</p>
-      <button className=' bg-slate-700'>Buy now</button>
-    </div>
+    <div class="max-w-sm rounded overflow-hidden shadow-lg">
+  <img class="w-full" src={order.imageUrl} alt="Sunset in the mountains"/>
+  <div class="px-6 py-4">
+    <div class="font-bold text-xl mb-2"></div>
+    <p class="text-gray-700 text-base">
+     
+    </p>
+  </div>
+  <div class="px-6 pt-4 pb-2">
+    <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">{order.price}</span>
+    <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">{order.category}</span>
+    <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">{order.brand}</span>
+  </div>
+  <button onClick={handelNavigate}>Buy</button>
+</div>
   );
 }
 
