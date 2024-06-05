@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Fragment, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Disclosure,
@@ -11,6 +11,7 @@ import {
   Transition,
 } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import axios from 'axios'
 
 const navigation = [
   { name: 'Dashboard', href: '#', current: true },
@@ -24,6 +25,38 @@ function classNames(...classes) {
 }
 
 export default function Navbar() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // Check login status
+    axios.get('/api/user/status', { withCredentials: true })
+      .then(response => {
+        if (response.status === 200) {
+          setIsLoggedIn(true);
+        }
+      })
+      .catch(error => {
+        setIsLoggedIn(false);
+      });
+  }, []);
+
+  const handleLogout = () => {
+    // Make a request to the logout endpoint
+    axios.get('/api/user/logout', { withCredentials: true })
+      .then(response => {
+        if (response.status === 200) {
+          // Clear token from local storage
+          localStorage.removeItem('token');
+          // Update the isLoggedIn state to false
+          setIsLoggedIn(false);
+        }
+      })
+      .catch(error => {
+        console.error('Logout failed', error);
+      });
+  }
+  
+
   return (
     <Disclosure as="nav" className="bg-gray-800">
       {({ open }) => (
@@ -31,7 +64,7 @@ export default function Navbar() {
           <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
             <div className="relative flex h-16 items-center justify-between">
               <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-                {/* Mobile menu button*/}
+                {/* Mobile menu button */}
                 <DisclosureButton className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                   <span className="absolute -inset-0.5" />
                   <span className="sr-only">Open main menu</span>
@@ -100,31 +133,45 @@ export default function Navbar() {
                     leaveTo="transform opacity-0 scale-95"
                   >
                     <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                      <MenuItem>
-                       <Link to='/user/signup'>
-Sign Up
-                       </Link>
-                      </MenuItem>
-                      <MenuItem>
-                        {({ focus }) => (
-                          <a
-                            href="#"
-                            className={classNames(focus ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
-                          >
-                            Settings
-                          </a>
-                        )}
-                      </MenuItem>
-                      <MenuItem>
-                        {({ focus }) => (
-                          <a
-                            href="#"
-                            className={classNames(focus ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
-                          >
-                            Sign out
-                          </a>
-                        )}
-                      </MenuItem>
+                      {!isLoggedIn ? (
+                        <>
+                          <MenuItem>
+                            {({ active }) => (
+                              <Link to='/user/signup' className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}>
+                                Sign Up
+                              </Link>
+                            )}
+                          </MenuItem>
+                          <MenuItem>
+                            {({ active }) => (
+                              <Link to='/user/login' className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}>
+                                Login
+                              </Link>
+                            )}
+                          </MenuItem>
+
+                          <MenuItem>
+                            {({ active }) => (
+                              <Link to='/user/seller' className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}>
+                                Seller
+                              </Link>
+                            )}
+                          </MenuItem>
+                        </>
+                      ) : (
+                        <MenuItem>
+                          {({ active }) => (
+                            <a
+                              href="#"
+                              onClick={handleLogout}
+                              className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
+                            >
+                              Logout
+                            </a>
+                            
+                          )}
+                        </MenuItem>
+                      )}
                     </MenuItems>
                   </Transition>
                 </Menu>
@@ -155,4 +202,3 @@ Sign Up
     </Disclosure>
   )
 }
-

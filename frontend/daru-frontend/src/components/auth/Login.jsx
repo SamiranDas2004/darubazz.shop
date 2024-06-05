@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Login() {
     const [user, setUser] = useState({
@@ -18,6 +18,8 @@ function Login() {
             if (!response) {
                 console.log("Error from the server");
             }
+            const token = response.data.token;
+            localStorage.setItem('token', token);
             console.log(response.data);
             if (response.status===200) {
                 navigate('/product')
@@ -55,6 +57,9 @@ function Login() {
                     className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                 >
                     Login
+                    <p>
+                        if you are not Register then click here <Link to='/user/signup'>Sign up</Link>
+                    </p>
                 </button>
             </form>
         </div>

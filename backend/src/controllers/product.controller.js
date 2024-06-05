@@ -1,5 +1,7 @@
+import mongoose from "mongoose";
 import Product from "../models/product.model.js";
 import { uploadOnCloudinary } from "../helper/uploadtocloudinary.js";
+import User from "../models/user.model.js";
 
 export const createProduct = async (req, res) => {
   try {
@@ -7,39 +9,78 @@ export const createProduct = async (req, res) => {
           return res.status(400).json({ message: "Request body is empty" });
       }
 
-      const { productname, price, category, brand } = req.body;
+      const { username, productname, price, category, brand } = req.body;
 
-      if (!productname || !price || !category || !brand) {
+      if (!productname || !price || !category || !brand || !username) {
           return res.status(400).json({ message: "All fields (productname, price, category, brand) are required" });
       }
 
       const imagePath = req.file?.path;
       if (!imagePath) {
-          return res.status(409).json("Image was not uploaded");
+          return res.status(409).json({ message: "Image was not uploaded" });
       }
 
+   const  findUser =await User.findOne({username})
+   if (!findUser) {
+   return res.status(402).json(" cant find the user ")
+   }
+console.log(findUser);
       const uploadResult = await uploadOnCloudinary(imagePath);
       const imageUrl = uploadResult.secure_url;  // Extract the secure_url
 
       if (!imageUrl) {
-          return res.status(409).json("Failed to upload on cloudinary");
+          return res.status(409).json({ message: "Failed to upload on cloudinary" });
       }
+
 
       const product = await Product.create({
           productname,
           price,
           category,
           brand,
-          imageUrl
+          imageUrl,
+          user: findUser._id // Convert user to ObjectId
       });
 
       if (!product) {
-          return res.status(401).json("Product creation failed");
+          return res.status(401).json({ message: "Product creation failed" });
       }
 
       return res.status(200).json(product);
   } catch (error) {
       return res.status(500).json({ message: "An error occurred", error: error.message });
+  }
+};
+
+
+
+
+
+
+export const CreatedByOnuser = async (req, res) => {
+  try {
+    const { username } = req.query;  // Use req.query to get the username from query parameters
+
+    // Find the user by username
+    const findUser = await User.findOne({ username });
+
+    // Check if user exists
+    if (!findUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Find products created by the user
+    const productsOfOneUser = await Product.find({ user: findUser._id });
+
+    // Check if products exist
+    if (!productsOfOneUser || productsOfOneUser.length === 0) {
+      return res.status(404).json({ message: "No products found for this user" });
+    }
+
+    // Return the products
+    return res.status(200).json(productsOfOneUser);
+  } catch (error) {
+    return res.status(500).json({ message: "An error occurred", error: error.message });
   }
 };
 

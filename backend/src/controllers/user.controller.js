@@ -103,12 +103,14 @@ export const login = async (req, res) => {
 
     // Set token in HTTP-only cookie
     res.cookie('token', token, { httpOnly: true, secure: true, sameSite: 'strict' });
-user.save()
-    return res.status(200).json({ message: "User logged in successfully",user });
+
+    // Return the token in the response JSON
+    return res.status(200).json({ message: "User logged in successfully", user, token });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
+
 
 export const logout = (req, res) => {
   try {

@@ -21,7 +21,7 @@ const productSchema=mongoose.Schema(
             type:String,
             default:"daru"
         },
-        createdBy:{
+        user:{
             type:mongoose.Schema.Types.ObjectId,
             ref:"users"
         }
