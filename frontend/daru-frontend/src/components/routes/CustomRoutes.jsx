@@ -8,6 +8,8 @@ import Registration from '../auth/Registration'
 import Verify from '../auth/Verify'
 import Login from '../auth/Login'
 import CreateProduct from '../seller/CreateProduct'
+import OneProduct from '../seller/OneProduct'
+import UpdateProduct from '../seller/UpdateProduct'
 function CustomRoutes() {
   return (
     <div>
@@ -21,6 +23,9 @@ function CustomRoutes() {
             <Route path='/user/verification/:username'  element={<Verify/>}/>
             <Route path='/user/login' element={<Login/>}/>
             <Route path='/user/seller' element={<CreateProduct/>}/>
+            <Route path='/seller/products/:username' element={<OneProduct/>}/>
+
+            <Route path='/seller/products/:username/:id' element={<UpdateProduct/>}/>
         </Routes>
     </div>
   )
