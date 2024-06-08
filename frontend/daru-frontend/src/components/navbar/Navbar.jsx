@@ -1,5 +1,5 @@
 import { Fragment, useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import {
   Disclosure,
   DisclosureButton,
@@ -12,12 +12,16 @@ import {
 } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import axios from 'axios'
+import { jwtDecode } from "jwt-decode"
+
+import { Button } from '@mui/material'
+
 
 const navigation = [
   { name: 'Dashboard', href: '#', current: true },
   { name: 'Team', href: '#', current: false },
   { name: 'Projects', href: '#', current: false },
-  { name: 'Calendar', href: '#', current: false },
+  { name: 'cart', href: '/cart', current: false },
 ]
 
 function classNames(...classes) {
@@ -26,6 +30,26 @@ function classNames(...classes) {
 
 export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+const navigate=useNavigate()
+
+const userId=async()=>{
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    console.log("not logged in");
+  }
+
+  const decodedToken=jwtDecode(token)
+ const userId=decodedToken.userId;
+ if (!userId) {
+  console.log("userId not found");
+ }
+
+ navigate(`/cart/${userId}`)
+
+
+}
+
 
   useEffect(() => {
     // Check login status
@@ -99,6 +123,9 @@ export default function Navbar() {
                       </a>
                     ))}
                   </div>
+                 <Button 
+                 onClick={userId}
+                 >cart</Button>
                 </div>
               </div>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">

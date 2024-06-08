@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
+import { jwtDecode } from "jwt-decode"
+
+
 
 function Order() {
   const [order, setOrder] = useState(null);
+  const [message,setMessage]=useState('')
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -20,23 +24,45 @@ function Order() {
     fetchOrder();
   }, [id]);
 
-  const handleBuy = async () => {
+ 
+  
+
+  const handelCart = async () => {
+    const token = localStorage.getItem('token');
+  
+    if (!token) {
+      console.log("User must be logged in");
+      return;
+    }
+  
     try {
-      const token = localStorage.getItem('token');
-      // console.log("Token:", token); // Log the token to see if it's retrieved properly
-      if (token) {
-        navigate('/order/address');
-        return;
+      const decodedToken = jwtDecode(token);
+      console.log("User information from token", decodedToken.userId);
+  
+      const userId = decodedToken.userId;
+      const productId = order._id;
+  
+      const response = await axios.post("http://localhost:8000/api/user/cart", {
+        productId,
+        userId
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+  
+      console.log(response.status);
+  
+      if (response.status === 200) {
+        console.log(setMessage("Added to cart"));
       } else {
-        navigate('/user/login');
+        setMessage("Cannot create the cart");
       }
+  
     } catch (error) {
-      console.error("Error fetching token:", error); // Log any errors that occur
-      throw new Error(error.message);
+      setMessage(`Error: ${error.response?.data?.message || error.message}`);
     }
   };
-  
-  
 
   if (!order) {
     return <p>Loading...</p>;
@@ -44,6 +70,7 @@ function Order() {
 
   return (
     <div className="max-w-sm rounded overflow-hidden shadow-lg">
+      {message && <p>{message}</p>}
       <img className="w-full" src={order.imageUrl} alt="Product" />
       <div className="px-6 py-4">
         <div className="font-bold text-xl mb-2">{order.name}</div>
@@ -54,7 +81,7 @@ function Order() {
         <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">{order.category}</span>
         <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">{order.brand}</span>
       </div>
-      <button onClick={handleBuy}>Buy</button>
+      <button onClick={handelCart}>Add to cart</button>
     </div>
   );
 }
