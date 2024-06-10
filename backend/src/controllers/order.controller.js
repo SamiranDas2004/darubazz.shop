@@ -1,5 +1,6 @@
 import OrderItem from "../models/orderItem.model.js";
 import Product from "../models/product.model.js";
+import User from "../models/user.model.js";
 
 
 export const createOrderItem = async (req, res) => {
@@ -51,21 +52,49 @@ return res.status(200).json(" cancel order successfully ")
 
 
 export const orderPrice = async (req, res) => {
-  const { userId } = req.body;
+    const { userId} = req.body;
+  const {totalPrice}=req.params;
+  console.log(totalPrice);
+    try {
+      const validUser = await User.findOne({_id: userId });
+      if (!validUser) {
+        return res.status(401).json({ message: "User has to login" });
+      }
+  
+      return res.status(200).json({ totalPrice });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  };
 
+
+
+export const ordersForOneSeller = async (req, res) => {
   try {
-    // Find all order items for the given userId
-    const userOrders = await OrderItem.find({ user: userId });
+    const { userId } = req.query;
 
-    if (!userOrders || userOrders.length === 0) {
-      return res.status(403).json("Can't find the user's orders");
+    // Find all products created by the seller
+    const products = await Product.find({ user: userId });
+    if (!products || products.length === 0) {
+      return res.status(404).json({ message: 'No products found for this seller' });
     }
 
-    // Calculate the total price of all products in the user's orders
-    const totalProductPrice = userOrders.reduce((total, order) => total + order.price, 0);
+    // Extract product IDs
+    const productIds = products.map(product => product._id);
 
-    return res.status(200).json({ totalProductPrice });
+    // Find all orders for those products
+    const orders = await OrderItem.find({ productId: { $in: productIds } }).populate('productId').populate('user');
+
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ message: 'No orders found for this seller\'s products' });
+    }
+
+    return res.status(200).json(orders);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
+
+  
+
+

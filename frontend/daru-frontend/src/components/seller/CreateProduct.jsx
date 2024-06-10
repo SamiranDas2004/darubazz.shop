@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import { jwtDecode } from 'jwt-decode';
 const CreateProduct = () => {
   const [productname, setProductname] = useState('');
   const [price, setPrice] = useState('');
@@ -66,6 +66,25 @@ navigate(`/seller/products/${username}`)
     }
   };
 
+const getYourOrders=async()=>{
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    console.log("not logged in");
+  }
+
+  const decodedToken=jwtDecode(token)
+ const userId=decodedToken.userId;
+ console.log(userId);
+ if (!userId) {
+  console.log("userId not found");
+  return
+ }
+  navigate(`/yourOrders/${userId}`)
+}
+
+
+
   return (
     <div className="grid grid-cols-5">
       <div className="col-span-1">
@@ -85,6 +104,26 @@ navigate(`/seller/products/${username}`)
           </div>
         </div>
       </div>
+
+
+      <div className="col-span-1">
+        <div className="grid">
+          <div className="col-span-1">
+            <div className="flex flex-col space-y-2">
+              <label className="flex items-center">
+                <input 
+                  type="radio" 
+                  name="sortOrder" 
+                  value="yourProducts" 
+                  onClick={getYourOrders}  // Call findProduct when radio button is clicked
+                />
+                <span className="ml-2">Your Orders</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
 
       <div className="col-span-4">
         {message && <p>{message}</p>}

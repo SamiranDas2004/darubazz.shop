@@ -16,7 +16,12 @@ export default function Cart() {
   const [image, setImage] = useState();
 
 
-  
+
+
+  const totalPrice = cartItems.reduce((total, cartItem) => {
+    const itemTotal = cartItem.products.reduce((subTotal, product) => subTotal + product.price, 0);
+    return total + itemTotal;
+  }, 0);
 
 
 
@@ -48,7 +53,7 @@ export default function Cart() {
 
       if (responses.every(response => response.status === 201)) {
         setMessage('Order placed successfully');
-        navigate('/order/address'); // Redirect to order confirmation page
+        navigate(`/order/address/${totalPrice}`); // Redirect to order confirmation page
       } else {
         setMessage('Failed to place order for some items');
       }
@@ -99,10 +104,6 @@ export default function Cart() {
     }
   };
 
-  const totalPrice = cartItems.reduce((total, cartItem) => {
-    const itemTotal = cartItem.products.reduce((subTotal, product) => subTotal + product.price, 0);
-    return total + itemTotal;
-  }, 0);
 
   const imageChange = (id) => {
     setImage(id);
