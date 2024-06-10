@@ -4,7 +4,7 @@ import Product from "../models/product.model.js";
 
 export const createOrderItem = async (req, res) => {
   const { orderId } = req.params; // Extract productId from URL parameters
-
+  const{userId}=req.body;
 
   try {
       // Fetch the product to ensure it exists
@@ -16,6 +16,7 @@ export const createOrderItem = async (req, res) => {
       // Create the order item
       const orderItem = new OrderItem({
           productId: product._id,
+          user:userId,
           price:product.price,
           brand:product.brand,
           productname:product.productname,
@@ -47,3 +48,24 @@ return res.status(200).json(" cancel order successfully ")
 }
 
 
+
+
+export const orderPrice = async (req, res) => {
+  const { userId } = req.body;
+
+  try {
+    // Find all order items for the given userId
+    const userOrders = await OrderItem.find({ user: userId });
+
+    if (!userOrders || userOrders.length === 0) {
+      return res.status(403).json("Can't find the user's orders");
+    }
+
+    // Calculate the total price of all products in the user's orders
+    const totalProductPrice = userOrders.reduce((total, order) => total + order.price, 0);
+
+    return res.status(200).json({ totalProductPrice });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};

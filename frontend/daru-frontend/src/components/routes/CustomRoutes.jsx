@@ -11,6 +11,7 @@ import CreateProduct from '../seller/CreateProduct'
 import OneProduct from '../seller/OneProduct'
 import UpdateProduct from '../seller/UpdateProduct'
 import Cart from '../cart/Cart'
+import PlaceOrder from '../order/PlaceOrder'
 function CustomRoutes() {
   return (
     <div>
@@ -25,7 +26,7 @@ function CustomRoutes() {
             <Route path='/user/login' element={<Login/>}/>
             <Route path='/user/seller' element={<CreateProduct/>}/>
             <Route path='/seller/products/:username' element={<OneProduct/>}/>
-
+<Route path='/payment' element={<PlaceOrder/>}/>
             <Route path='/seller/products/:username/:id' element={<UpdateProduct/>}/>
             <Route path='/cart/:userId' element={<Cart/>}/>
         </Routes>

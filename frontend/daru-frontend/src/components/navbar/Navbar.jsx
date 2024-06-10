@@ -18,10 +18,10 @@ import { Button } from '@mui/material'
 
 
 const navigation = [
-  { name: 'Dashboard', href: '#', current: true },
-  { name: 'Team', href: '#', current: false },
+  { name: 'Dashboard', href: '/', current: true },
+  { name: 'Products', href: '/product', current: false },
   { name: 'Projects', href: '#', current: false },
-  { name: 'cart', href: '/cart', current: false },
+ 
 ]
 
 function classNames(...classes) {

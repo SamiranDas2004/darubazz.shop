@@ -17,11 +17,16 @@ function Address() {
     const form=(e)=>{
         e.preventDefault();
     }
-
+    
     const handleSubmit = async (e) => {
         e.preventDefault(); // Prevent default form submission
       
         try {
+          const token = localStorage.getItem('token');
+          if (!token) {
+         console.log("user not logedin");
+         return
+          }
           const response = await axios.post("http://localhost:8000/api/address/orderaddress", address);
           console.log(response.data); // Log response data
           navigate('/payment');
