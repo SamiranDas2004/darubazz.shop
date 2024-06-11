@@ -2,10 +2,9 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Fragment } from 'react';
-import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react';
+import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import { jwtDecode } from "jwt-decode"
-
+import {jwtDecode} from 'jwt-decode';
 
 export default function Cart() {
   const [open, setOpen] = useState(true);
@@ -13,32 +12,27 @@ export default function Cart() {
   const [cartItems, setCartItems] = useState([]);
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
-  const [image, setImage] = useState();
-
-
-
+  const [image, setImage] = useState('');
 
   const totalPrice = cartItems.reduce((total, cartItem) => {
     const itemTotal = cartItem.products.reduce((subTotal, product) => subTotal + product.price, 0);
     return total + itemTotal;
   }, 0);
 
-
-
   const handlePlaceOrder = async () => {
     const token = localStorage.getItem('token');
 
     if (!token) {
-      console.log("not logged in");
+      console.log('Not logged in');
+      return;
     }
-  
-    const decodedToken=jwtDecode(token)
-   const userId=decodedToken.userId;
-   if (!userId) {
-    console.log("userId not found");
-    return
-   }
-    
+
+    const decodedToken = jwtDecode(token);
+    const userId = decodedToken.userId;
+    if (!userId) {
+      console.log('User ID not found');
+      return;
+    }
 
     try {
       const orderPromises = cartItems.flatMap(cartItem =>
@@ -53,7 +47,7 @@ export default function Cart() {
 
       if (responses.every(response => response.status === 201)) {
         setMessage('Order placed successfully');
-        navigate(`/order/address/${totalPrice}`); // Redirect to order confirmation page
+        navigate(`/order/address/${totalPrice}`);
       } else {
         setMessage('Failed to place order for some items');
       }
@@ -80,20 +74,19 @@ export default function Cart() {
     fetchCartItems();
   }, [userId]);
 
-  const removeFromCart = async (productId) => {
+  const removeFromCart = async productId => {
+    console.log(productId);
     try {
-      const response = await axios.delete('http://localhost:8000/api/user/deletecart', {
-        data: { productId },
-      });
+      const response = await axios.post(`http://localhost:8000/api/user/deletecart/${productId}`, { userId });
       if (response.status === 200) {
         setMessage('Product removed from cart');
-        setCartItems((prevItems) =>
+        setCartItems(prevItems =>
           prevItems
-            .map((item) => ({
+            .map(item => ({
               ...item,
-              products: item.products.filter((product) => product._id !== productId),
+              products: item.products.filter(product => product._id !== productId),
             }))
-            .filter((item) => item.products.length > 0)
+            .filter(item => item.products.length > 0)
         );
       } else {
         setMessage('Failed to remove from cart');
@@ -104,15 +97,14 @@ export default function Cart() {
     }
   };
 
-
-  const imageChange = (id) => {
-    setImage(id);
+  const imageChange = imageUrl => {
+    setImage(imageUrl);
   };
 
   return (
     <Transition show={open}>
-      <Dialog className="relative z-10" onClose={setOpen}>
-        <TransitionChild
+      <Dialog className="relative z-10" onClose={() => setOpen(false)}>
+        <Transition.Child
           enter="ease-in-out duration-500"
           enterFrom="opacity-0"
           enterTo="opacity-100"
@@ -120,22 +112,13 @@ export default function Cart() {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="grid w-full grid-cols-1 items-start gap-x-6 gap-y-8 sm:grid-cols-12 lg:gap-x-8 ">
-            <div className="aspect-h- aspect-w-2 overflow-hidden rounded-lg bg-gray-100 sm:col-span-4 lg:col-span-5">
-              <div className="max-w-lg w-full bg-white rounded-lg h-full shadow-lg p-4 overflow-hidden">
-                <img src={image} alt="Selected product" className="object-cover object-center" />
-                <div className="text-center">
-                  <p className="text-lg font-bold text-gray-900">{message}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </TransitionChild>
+          <div className="fixed inset-0 " />
+        </Transition.Child>
 
         <div className="fixed inset-0 overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
             <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
-              <TransitionChild
+              <Transition.Child
                 enter="transform transition ease-in-out duration-500 sm:duration-700"
                 enterFrom="translate-x-full"
                 enterTo="translate-x-0"
@@ -143,11 +126,11 @@ export default function Cart() {
                 leaveFrom="translate-x-0"
                 leaveTo="translate-x-full"
               >
-                <DialogPanel className="pointer-events-auto w-screen max-w-md">
+                <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
                   <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
                     <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
                       <div className="flex items-start justify-between">
-                        <DialogTitle className="text-lg font-medium text-gray-900">Shopping cart</DialogTitle>
+                        <Dialog.Title className="text-lg font-medium text-gray-900">Shopping Cart</Dialog.Title>
                         <div className="ml-3 flex h-7 items-center">
                           <button
                             type="button"
@@ -164,25 +147,38 @@ export default function Cart() {
                       <div className="mt-8">
                         <div className="flow-root">
                           <ul role="list" className="-my-6 divide-y divide-gray-200">
-                            {cartItems.map((cartItem) => (
+                            {cartItems.map(cartItem => (
                               <div key={cartItem._id} className="">
-                                {cartItem.products.map((product) => (
-                                  <div
-                                    onClick={() => imageChange(product.imageUrl)}
-                                    key={product._id}
-                                  >
-                                    <img src={product.imageUrl} alt={product.productname} className="" />
-                                    <h3 className="">{product.productname}</h3>
-                                    <p>
-                                      <strong>Brand:</strong> {product.brand}
-                                    </p>
-                                    <p>
-                                      <strong>Price:</strong> {product.price}
-                                    </p>
-                                    <p>
-                                      <strong>Category:</strong> {product.category}
-                                    </p>
-                                    <button onClick={() => removeFromCart(product._id)}>Remove</button>
+                                {cartItem.products.map(product => (
+                                  <div key={product._id} className="py-6 flex">
+                                    <div className="flex-shrink-0">
+                                      <img
+                                        src={product.imageUrl}
+                                        alt={product.productname}
+                                        className="h-24 w-24 object-cover object-center cursor-pointer"
+                                        onClick={() => imageChange(product.imageUrl)}
+                                      />
+                                    </div>
+
+                                    <div className="ml-4 flex-1 flex flex-col">
+                                      <div>
+                                        <div className="flex justify-between text-base font-medium text-gray-900">
+                                          <h3>{product.productname}</h3>
+                                          <p className="ml-4">${product.price}</p>
+                                        </div>
+                                        <p className="mt-1 text-sm text-gray-500">{product.brand}</p>
+                                      </div>
+                                      <div className="flex-1 flex items-end justify-between text-sm">
+                                        <p className="text-gray-500">{product.category}</p>
+
+                                        <button
+                                          onClick={() => removeFromCart(product._id)}
+                                          className="font-medium text-indigo-600 hover:text-indigo-500"
+                                        >
+                                          Remove
+                                        </button>
+                                      </div>
+                                    </div>
                                   </div>
                                 ))}
                               </div>
@@ -219,14 +215,26 @@ export default function Cart() {
                           </button>
                         </p>
                       </div>
+                      {message && <div className="mt-4 text-center text-red-500">{message}</div>}
                     </div>
                   </div>
-                </DialogPanel>
-              </TransitionChild>
+                </Dialog.Panel>
+              </Transition.Child>
             </div>
           </div>
         </div>
       </Dialog>
+
+      {image && (
+        <div className="fixed inset-0 flex items-center justify-center">
+          <div className="max-w-lg w-full bg-white rounded-lg shadow-lg p-4 overflow-hidden">
+            <img src={image} alt="Selected product" className="object-cover object-center w-full h-auto" />
+            <div className="text-center mt-4">
+              <p className="text-lg font-bold text-gray-900">{message}</p>
+            </div>
+          </div>
+        </div>
+      )}
     </Transition>
   );
 }

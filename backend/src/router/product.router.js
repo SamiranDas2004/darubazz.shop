@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { allProduct, createProduct, deleteProduct, findbyid, updateProduct,CreatedByOnuser } from "../controllers/product.controller.js";
+import { allProduct, createProduct, deleteProduct, findbyid, updateProduct,CreatedByOnuser, getProductByCategory } from "../controllers/product.controller.js";
 import { upload } from "../helper/multermiddleware.js";
 
 
@@ -12,4 +12,5 @@ productRouter.route('/update/:productId').put(updateProduct);
 productRouter.route('/delete/:productId').delete(deleteProduct)
 productRouter.route("/allproducts").get(allProduct)
 productRouter.route("/yourproducts").get(CreatedByOnuser)
+productRouter.route("/category/:category").get(getProductByCategory)
 export default productRouter

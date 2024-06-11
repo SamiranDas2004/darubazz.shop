@@ -56,31 +56,29 @@ export const getAllCartItems = async (req, res) => {
 
   export const reMoveFromCart = async (req, res) => {
     try {
-        const { productId } = req.body;
-      
-
-        if (!productId) {
-            return res.status(404).json({ message: "No productId found" });
-        }
-
-        // Remove the product from the user's cart
-        const userCart = await Cart.findOneAndDelete(
-          productId
-        );
-
-        if (!userCart) {
-            return res.status(404).json({ message: "No cart found for this product" });
-        }
-
-        const deleteProduct = await Product.findByIdAndDelete(productId);
-
-        if (!deleteProduct) {
-            return res.status(404).json({ message: "Product not deleted" });
-        }
-
-        return res.status(200).json({ message: "Product deleted from cart", userCart });
+      const { productId } = req.params;
+      const {userId}=req.body
+  
+      if (!productId) {
+        return res.status(400).json({ message: "No productId found" });
+      }
+  
+      // Remove the product from the user's cart
+      const userCart = await Cart.findOneAndUpdate(
+        { userId: userId }, // Assuming you have the userId in the request user object
+        { $pull: { products: { productId } } }, // Remove the product from the products array
+        { new: true } // To return the updated document
+      );
+  
+      if (!userCart) {
+        return res.status(404).json({ message: "No cart found for this user" });
+      }
+  
+      return res.status(200).json({ message: "Product removed from cart", userCart });
     } catch (error) {
-        console.log(error);
-        return res.status(500).json({ error: error.message });
+      console.error(error);
+      return res.status(500).json({ error: error.message });
     }
-};
+  };
+  
+  

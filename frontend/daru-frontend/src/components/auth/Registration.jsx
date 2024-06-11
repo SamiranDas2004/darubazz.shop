@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
-import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function Registration() {
     const [user, setUser] = useState({
@@ -27,50 +27,59 @@ function Registration() {
     };
 
     return (
-        <div className='grid grid-cols-6'>
-            <form onSubmit={register} className='grid col-span-1 max-w-sm mx-auto'>
-                <div className='mb-5'>
-                    <label htmlFor="username" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Username</label>
-                    <input
-                        value={user.username}
-                        onChange={(e) => setUser({ ...user, username: e.target.value })}
-                        type="text" id="username"
-                        className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-                        placeholder="Username" required
-                    />
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-md w-full space-y-8">
+                <div>
+                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                        Register an account
+                    </h2>
                 </div>
-                <div className='mb-5'>
-                    <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
-                    <input
-                        value={user.email}
-                        onChange={(e) => setUser({ ...user, email: e.target.value })}
-                        type="email" id="email"
-                        className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-                        placeholder="email" required
-                    />
-                </div>
-                <div className='mb-5'>
-                    <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your password</label>
-                    <input
-                        value={user.password}
-                        onChange={(e) => setUser({ ...user, password: e.target.value })}
-                        type="password" id="password"
-                        className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-                        required
-                    />
-                </div>
-                <button
-                    type="submit"
-                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                >
-                    Register new account
-                </button>
-            </form>
-            <div className='grid col-span-4'>
-                <img src='https://content.gotoliquorstore.com/images/Pickup-Delivery1.jpg' alt="Background"/>
+                <form onSubmit={register} className="mt-8 space-y-6">
+                    <input type="hidden" name="remember" defaultValue="true" />
+                    <div className="rounded-md shadow-sm -space-y-px">
+                        <div>
+                            <label htmlFor="username" className="sr-only">Username</label>
+                            <input
+                                value={user.username}
+                                onChange={(e) => setUser({ ...user, username: e.target.value })}
+                                type="text" id="username"
+                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                                placeholder="Username" required
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="email" className="sr-only">Email address</label>
+                            <input
+                                value={user.email}
+                                onChange={(e) => setUser({ ...user, email: e.target.value })}
+                                type="email" id="email"
+                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                                placeholder="Email address" required
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="password" className="sr-only">Password</label>
+                            <input
+                                value={user.password}
+                                onChange={(e) => setUser({ ...user, password: e.target.value })}
+                                type="password" id="password"
+                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                                placeholder="Password" required
+                            />
+                        </div>
+                    </div>
+                    <div>
+                        <button
+                            type="submit"
+                            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                        >
+                            Register
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
-    )
+    );
 }
 
 export default Registration;

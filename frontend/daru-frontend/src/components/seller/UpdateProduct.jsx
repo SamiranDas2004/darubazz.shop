@@ -62,64 +62,75 @@ function UpdateProduct() {
   };
 
   return (
-    <>
-      <div className="col-span-4">
-        {message && <p>{message}</p>}
-        <form onSubmit={handleUpdate}>
-          <div>
-            <label>User Name:</label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-          </div>
-          <div>
-            <label>Product Name:</label>
-            <input
-              type="text"
-              value={productname}
-              onChange={(e) => setProductname(e.target.value)}
-            />
-          </div>
-          <div>
-            <label>Price:</label>
-            <input
-              type="number"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-            />
-          </div>
-          <div>
-            <label>Category:</label>
-            <input
-              type="text"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-            />
-          </div>
-          <div>
-            <label>Brand:</label>
-            <input
-              type="text"
-              value={brand}
-              onChange={(e) => setBrand(e.target.value)}
-            />
-          </div>
-          <div>
-            <label>Image:</label>
-            <input
-              type="file"
-              onChange={(e) => setImage(e.target.files[0])}
-              ref={fileInputRef}
-            />
-          </div>
-          <button type="submit" disabled={loading}>
+    <div className="max-w-3xl mx-auto p-6 bg-white shadow-md rounded-lg">
+    <h2 className="text-2xl font-bold text-center mb-6">Update Your Products</h2>
+      {message && <p className="mb-4 text-red-500">{message}</p>}
+      <form onSubmit={handleUpdate} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700">User Name</label>
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Product Name</label>
+          <input
+            type="text"
+            value={productname}
+            onChange={(e) => setProductname(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Price</label>
+          <input
+            type="number"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Category</label>
+          <input
+            type="text"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Brand</label>
+          <input
+            type="text"
+            value={brand}
+            onChange={(e) => setBrand(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Image</label>
+          <input
+            type="file"
+            onChange={(e) => setImage(e.target.files[0])}
+            ref={fileInputRef}
+            className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+          />
+        </div>
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            disabled={loading}
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
             {loading ? 'Updating Product...' : 'Update Product'}
           </button>
-        </form>
-      </div>
-    </>
+        </div>
+      </form>
+    </div>
   );
 }
 

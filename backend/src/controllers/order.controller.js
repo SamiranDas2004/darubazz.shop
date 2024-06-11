@@ -71,7 +71,7 @@ export const orderPrice = async (req, res) => {
 
 export const ordersForOneSeller = async (req, res) => {
   try {
-    const { userId } = req.query;
+    const { userId } = req.params;
 
     // Find all products created by the seller
     const products = await Product.find({ user: userId });

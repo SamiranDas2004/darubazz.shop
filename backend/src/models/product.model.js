@@ -19,7 +19,7 @@ const productSchema=mongoose.Schema(
         },
         category:{
             type:String,
-            default:"daru"
+           
         },
         user:{
             type:mongoose.Schema.Types.ObjectId,

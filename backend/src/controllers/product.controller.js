@@ -178,3 +178,24 @@ export const allProduct=async(req,res)=>{
     throw new Error(error.message)
   }
 }
+
+
+export const getProductByCategory = async (req, res) => {
+  try {
+    const { category } = req.params;
+
+    if (!category) {
+      return res.status(400).json({ error: "No category provided" });
+    }
+
+    const products = await Product.find({ category });
+
+    if (products.length === 0) {
+      return res.status(404).json({ message: "No products found" });
+    }
+
+    return res.status(200).json({ products });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};

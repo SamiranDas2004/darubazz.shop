@@ -13,6 +13,7 @@ import UpdateProduct from '../seller/UpdateProduct'
 import Cart from '../cart/Cart'
 import PlaceOrder from '../order/PlaceOrder'
 import YourOrders from '../seller/YourOrders'
+import DifferntCatagory from '../Category/DifferntCatagory'
 function CustomRoutes() {
   return (
     <div>
@@ -31,6 +32,12 @@ function CustomRoutes() {
             <Route path='/seller/products/:username/:id' element={<UpdateProduct/>}/>
             <Route path='/cart/:userId' element={<Cart/>}/>
             <Route path='/yourOrders/:userId' element={<YourOrders/>}/>
+            <Route path='/:category' element={<DifferntCatagory/>} />
+            <Route path='/:category' element={<DifferntCatagory/>} />
+            <Route path='/:category' element={<DifferntCatagory/>} />
+            <Route path='/:category' element={<DifferntCatagory/>} />
+            <Route path='/:category' element={<DifferntCatagory/>} />
+            <Route path='/:category' element={<DifferntCatagory/>} />
         </Routes>
     </div>
   )

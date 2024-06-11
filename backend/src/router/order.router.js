@@ -6,6 +6,6 @@ const orderRouter=Router()
 orderRouter.route('/placeorder/:orderId').post(createOrderItem)
 orderRouter.route('/cancelorder/:orderId').delete(cancelOrder)
 orderRouter.route('/payment/:totalPrice').post(orderPrice)
-orderRouter.route('/orders').post(ordersForOneSeller)
+orderRouter.route('/orders/:userId').post(ordersForOneSeller)
 
 export default orderRouter

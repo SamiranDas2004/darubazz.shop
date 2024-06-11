@@ -11,7 +11,7 @@ userRouter.route('/verify').post(verifyUser);
 userRouter.route('/login').post(login);
 userRouter.route("/logout").get(authenticateJWT, logout);
 userRouter.route('/cart').post(createCart)
-userRouter.route('/deletecart').delete(reMoveFromCart)
+userRouter.route('/deletecart/:productId').post(reMoveFromCart)
 userRouter.route('/cartitems/:userId').get(getAllCartItems)
 userRouter.route('/status').get(verifyToken, (req, res) => {
   res.status(200).json({ message: 'Authenticated', userId: req.userId });

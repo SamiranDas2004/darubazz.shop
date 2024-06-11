@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Button } from '@headlessui/react';
+import { useNavigate } from 'react-router-dom';
 
 function AllProducts() {
   const [products, setProducts] = useState([]);
   const [sortOrder, setSortOrder] = useState('');
-  const params = useParams();
   const navigate = useNavigate();
 
-  const handelNavigate = (id) => {
+  const handleNavigate = (id) => {
     navigate(`/order/${id}`);
-  }
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -42,10 +40,10 @@ function AllProducts() {
   };
 
   return (
-    <>
-      <h2>All Products</h2>
+    <div className="p-6">
+      <h2 className="text-2xl font-bold text-center mb-6">All Products</h2>
       <div className='grid grid-cols-6'>
-        <div className="grid col-span-1">
+        <div className="col-span-1 p-4 border-r">
           <div className="flex flex-col space-y-2">
             <label className="flex items-center">
               <input 
@@ -54,6 +52,7 @@ function AllProducts() {
                 value="highToLow" 
                 checked={sortOrder === 'highToLow'} 
                 onChange={handleSortOrderChange}
+                className="form-radio"
               />
               <span className="ml-2">High to Low</span>
             </label>
@@ -64,28 +63,30 @@ function AllProducts() {
                 value="lowToHigh" 
                 checked={sortOrder === 'lowToHigh'} 
                 onChange={handleSortOrderChange}
+                className="form-radio"
               />
               <span className="ml-2">Low to High</span>
             </label>
           </div>
         </div>
-        <div className="grid col-span-5 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="col-span-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {products.map((product) => (
             <div
-              onClick={() => handelNavigate(product._id)}
-              key={product._id} className="border p-4 cursor-pointer">
-              <img src={product.imageUrl} alt={product.productname} className="w-full h-auto" />
-              <h3 className="text-xl font-bold">{product.productname}</h3>
+              onClick={() => handleNavigate(product._id)}
+              key={product._id} className="border rounded-lg p-4 cursor-pointer shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105">
+              <div className="w-full h-48 overflow-hidden rounded-t-lg">
+                <img src={product.imageUrl} alt={product.productname} className="w-full h-full object-contain" />
+              </div>
+              <h3 className="text-xl font-bold mt-2">{product.productname}</h3>
               <p><strong>Brand:</strong> {product.brand}</p>
               <p><strong>Price:</strong> {product.price}</p>
               <p><strong>Category:</strong> {product.category}</p>
-            
             </div>
           ))}
         </div>
       </div>
-    </>
+    </div>
   );
-}
+} 
 
 export default AllProducts;
