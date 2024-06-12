@@ -9,9 +9,10 @@ import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
 import {jwtDecode} from 'jwt-decode';
 import { Button } from '@mui/material';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 const navigation = [
-  { name: 'Dashboard', href: '/', current: true },
+  { name: 'Home', href: '/', current: true },
   { name: 'Products', href: '/product', current: false },
 
 ];
@@ -107,18 +108,13 @@ export default function Navbar() {
                         {item.name}
                       </Link>
                     ))}
-                    <Button
-                      onClick={userId}
-                      className="ml-4 text-white"
-                    >
-                      Cart
-                    </Button>
+                   
                     <Button
                   
                     >
                        <Link
                                 to="/user/seller"
-                               
+                               className="h-6 w-6 text-white"
                               >
                                 Seller
                               </Link>
@@ -132,7 +128,13 @@ export default function Navbar() {
                   className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                 >
                   <span className="sr-only">View notifications</span>
-                  <BellIcon className="h-6 w-6" aria-hidden="true" />
+              
+                  <Button
+                      onClick={userId}
+                      className="ml-4 text-white"
+                    >
+<ShoppingCartIcon className="h-6 w-6 text-white" />
+                    </Button>
                 </button>
 
                 {/* Profile dropdown */}

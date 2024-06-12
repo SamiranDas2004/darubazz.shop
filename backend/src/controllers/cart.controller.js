@@ -57,17 +57,16 @@ export const getAllCartItems = async (req, res) => {
   export const reMoveFromCart = async (req, res) => {
     try {
       const { productId } = req.params;
-      const {userId}=req.body
+      const { userId } = req.body;
   
-      if (!productId) {
-        return res.status(400).json({ message: "No productId found" });
+      if (!productId || !userId) {
+        return res.status(400).json({ message: "ProductId and UserId are required" });
       }
   
-      // Remove the product from the user's cart
       const userCart = await Cart.findOneAndUpdate(
-        { userId: userId }, // Assuming you have the userId in the request user object
-        { $pull: { products: { productId } } }, // Remove the product from the products array
-        { new: true } // To return the updated document
+        { user: userId },
+        { $pull: { products: productId } }, // Ensure this matches the schema of your products array
+        { new: true }
       );
   
       if (!userCart) {
@@ -80,5 +79,6 @@ export const getAllCartItems = async (req, res) => {
       return res.status(500).json({ error: error.message });
     }
   };
+  
   
   

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
-
+import { jwtDecode  } from 'jwt-decode';
 function Address() {
   const navigate = useNavigate();
   const { totalPrice } = useParams();
@@ -25,8 +25,12 @@ function Address() {
       console.log(addressResponse.data);
 
       // Handle total payment
+      const token=localStorage.getItem('token')
+      const decodeJwt=jwtDecode(token)
+      const userId=decodeJwt.userId
+
       const paymentResponse = await axios.post(
-        `http://localhost:8000/api/order/payment/${totalPrice}`
+        `http://localhost:8000/api/order/payment/${totalPrice}`,{userId}
       );
 
       if (!paymentResponse) {

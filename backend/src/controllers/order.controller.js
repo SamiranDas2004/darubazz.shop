@@ -53,8 +53,9 @@ return res.status(200).json(" cancel order successfully ")
 
 export const orderPrice = async (req, res) => {
     const { userId} = req.body;
+
   const {totalPrice}=req.params;
-  console.log(totalPrice);
+ 
     try {
       const validUser = await User.findOne({_id: userId });
       if (!validUser) {

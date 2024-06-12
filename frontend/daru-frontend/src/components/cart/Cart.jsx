@@ -1,27 +1,69 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import {jwtDecode} from 'jwt-decode';
 
-export default function Cart() {
-  const [open, setOpen] = useState(true);
+const Cart = () => {
   const { userId } = useParams();
+  const [open, setOpen] = useState(true);
   const [cartItems, setCartItems] = useState([]);
   const [message, setMessage] = useState('');
-  const navigate = useNavigate();
+  const [totalPrice, setTotalPrice] = useState(0);
   const [image, setImage] = useState('');
+  const navigate = useNavigate();
 
-  const totalPrice = cartItems.reduce((total, cartItem) => {
-    const itemTotal = cartItem.products.reduce((subTotal, product) => subTotal + product.price, 0);
-    return total + itemTotal;
-  }, 0);
+  // Function to fetch cart items from backend
+  const fetchCartItems = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8000/api/user/cartitems/${userId}`);
+      if (response.status === 200) {
+        setCartItems(response.data);
+        calculateTotalPrice(response.data); // Calculate total price when cart items are fetched
+      } else {
+        setMessage("Can't get the cart items");
+      }
+    } catch (error) {
+      setMessage(`Error: ${error.response?.data?.message || error.message}`);
+    }
+  };
 
+  // Function to calculate total price
+  const calculateTotalPrice = (cartItems) => {
+    let totalPrice = 0;
+    cartItems.forEach(cartItem => {
+      cartItem.products.forEach(product => {
+        totalPrice += product.price;
+      });
+    });
+    setTotalPrice(totalPrice);
+  };
+
+  // Function to remove a product from cart
+  const removeFromCart = async (productId) => {
+    try {
+      const response = await axios.post(`http://localhost:8000/api/user/deletecart/${productId}`, { userId });
+      if (response.status === 200) {
+        setMessage('Product removed from cart');
+        // Update cart items after removing product
+        const updatedCartItems = cartItems.map(cartItem => ({
+          ...cartItem,
+          products: cartItem.products.filter(product => product._id !== productId)
+        })).filter(cartItem => cartItem.products.length > 0);
+        setCartItems(updatedCartItems);
+        calculateTotalPrice(updatedCartItems); // Recalculate total price after updating cart items
+      } else {
+        setMessage('Failed to remove from cart');
+      }
+    } catch (error) {
+      setMessage(`Error: ${error.response?.data?.message || error.message}`);
+    }
+  };
+
+  // Function to handle placing order
   const handlePlaceOrder = async () => {
     const token = localStorage.getItem('token');
-
     if (!token) {
       console.log('Not logged in');
       return;
@@ -57,47 +99,13 @@ export default function Cart() {
     }
   };
 
+  // Fetch cart items on component mount
   useEffect(() => {
-    const fetchCartItems = async () => {
-      try {
-        const response = await axios.get(`http://localhost:8000/api/user/cartitems/${userId}`);
-        if (response.status === 200) {
-          setCartItems(response.data);
-        } else {
-          setMessage("Can't get the cart items");
-        }
-      } catch (error) {
-        setMessage(`Error: ${error.response?.data?.message || error.message}`);
-      }
-    };
-
     fetchCartItems();
-  }, [userId]);
+  }, []);
 
-  const removeFromCart = async productId => {
-    console.log(productId);
-    try {
-      const response = await axios.post(`http://localhost:8000/api/user/deletecart/${productId}`, { userId });
-      if (response.status === 200) {
-        setMessage('Product removed from cart');
-        setCartItems(prevItems =>
-          prevItems
-            .map(item => ({
-              ...item,
-              products: item.products.filter(product => product._id !== productId),
-            }))
-            .filter(item => item.products.length > 0)
-        );
-      } else {
-        setMessage('Failed to remove from cart');
-      }
-    } catch (error) {
-      setMessage(`Error: ${error.response?.data?.message || error.message}`);
-      console.log(error);
-    }
-  };
-
-  const imageChange = imageUrl => {
+  // Function to handle image change
+  const imageChange = (imageUrl) => {
     setImage(imageUrl);
   };
 
@@ -148,7 +156,7 @@ export default function Cart() {
                         <div className="flow-root">
                           <ul role="list" className="-my-6 divide-y divide-gray-200">
                             {cartItems.map(cartItem => (
-                              <div key={cartItem._id} className="">
+                              <div key={cartItem._id}>
                                 {cartItem.products.map(product => (
                                   <div key={product._id} className="py-6 flex">
                                     <div className="flex-shrink-0">
@@ -164,13 +172,12 @@ export default function Cart() {
                                       <div>
                                         <div className="flex justify-between text-base font-medium text-gray-900">
                                           <h3>{product.productname}</h3>
-                                          <p className="ml-4">${product.price}</p>
+                                          <p className="ml-4">Rs {product.price}</p>
                                         </div>
                                         <p className="mt-1 text-sm text-gray-500">{product.brand}</p>
                                       </div>
                                       <div className="flex-1 flex items-end justify-between text-sm">
                                         <p className="text-gray-500">{product.category}</p>
-
                                         <button
                                           onClick={() => removeFromCart(product._id)}
                                           className="font-medium text-indigo-600 hover:text-indigo-500"
@@ -229,12 +236,19 @@ export default function Cart() {
         <div className="fixed inset-0 flex items-center justify-center">
           <div className="max-w-lg w-full bg-white rounded-lg shadow-lg p-4 overflow-hidden">
             <img src={image} alt="Selected product" className="object-cover object-center w-full h-auto" />
-            <div className="text-center mt-4">
-              <p className="text-lg font-bold text-gray-900">{message}</p>
+            <div className="absolute top-2 right-2">
+              <button
+                className="text-red-500 hover:text-red-600"
+                onClick={() => setImage('')}
+              >
+                <XMarkIcon className="h-6 w-6" />
+              </button>
             </div>
           </div>
         </div>
       )}
     </Transition>
   );
-}
+};
+
+export default Cart;
