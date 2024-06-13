@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast'; 
 
 function Registration() {
     const [user, setUser] = useState({
@@ -14,15 +15,30 @@ function Registration() {
         e.preventDefault();
         try {
             const response = await axios.post("http://localhost:8000/api/user/signup", user);
-            if (!response) {
-                console.log("No response from server");
-            }
-            if (response.status === 200) {
-                navigate(`/user/verification/${user.username}`);
+            if (response.data && response.status === 200) {
+                toast.success("Signup Successful");
+                setTimeout(() => {
+                    navigate(`/user/verification/${user.username}`);
+                }, 2500);
+            } else {
+                toast.error("Registration failed. Please try again later.");
             }
             console.log(response.data);
         } catch (error) {
-            console.error(error.message);
+            if (error.response) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                toast.error(error.response.data.message);
+                console.log(error.response.data);
+            } else if (error.request) {
+                // The request was made but no response was received
+                toast.error("No response received from the server.");
+                console.log(error.request);
+            } else {
+                // Something happened in setting up the request that triggered an Error
+                toast.error("An unexpected error occurred.");
+                console.log('Error', error.message);
+            }
         }
     };
 
@@ -75,6 +91,7 @@ function Registration() {
                         >
                             Register
                         </button>
+                        <Toaster position="top-right" reverseOrder={false} />
                     </div>
                 </form>
             </div>

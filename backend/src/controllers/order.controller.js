@@ -1,3 +1,4 @@
+import { sendOrderCancelEmail, sendOrderConfirmedEmail } from "../helper/sendVerificationEmail.js";
 import OrderItem from "../models/orderItem.model.js";
 import Product from "../models/product.model.js";
 import User from "../models/user.model.js";
@@ -5,7 +6,7 @@ import User from "../models/user.model.js";
 
 export const createOrderItem = async (req, res) => {
   const { orderId } = req.params; // Extract productId from URL parameters
-  const{userId}=req.body;
+  const{userId,username,email}=req.body;
 
   try {
       // Fetch the product to ensure it exists
@@ -18,6 +19,8 @@ export const createOrderItem = async (req, res) => {
       const orderItem = new OrderItem({
           productId: product._id,
           user:userId,
+          username:username,
+          email:email,
           price:product.price,
           brand:product.brand,
           productname:product.productname,
@@ -26,7 +29,7 @@ export const createOrderItem = async (req, res) => {
 
       // Save the order item to the database
       const savedOrderItem = await orderItem.save();
-
+console.log(savedOrderItem);
       return res.status(201).json({ message: "Order item created successfully", orderItem: savedOrderItem });
   } catch (error) {
       return res.status(500).json({ message: "An error occurred", error });
@@ -34,21 +37,63 @@ export const createOrderItem = async (req, res) => {
 };
 
 
-export const cancelOrder=async(req,res)=>{
-    const{orderId}=req.params
-    if (!orderId) {
-        return res.status(402).json("can't get the orderID from the params")
+
+export const cancelOrder = async (req, res) => {
+  const { orderId } = req.params;
+  const { username, email } = req.body;
+
+  if (!orderId) {
+      return res.status(400).json("Can't get the orderID from the params");
+  }
+
+  try {
+      const canceledOrder = await OrderItem.findByIdAndDelete(orderId);
+      if (!canceledOrder) {
+          return res.status(404).json("Can't find the order with this id");
+      }
+
+      const cancelOrderEmail = await sendOrderCancelEmail(username, email);
+      if (!cancelOrderEmail) {
+          return res.status(500).json("Some problem in the Email Section");
+      }
+
+      return res.status(200).json(cancelOrderEmail);
+  } catch (error) {
+      console.error(error);
+      return res.status(500).json("An error occurred while canceling the order");
+  }
+};
+
+
+export const confirmOrder = async (req, res) => {
+  console.log("in confirm");
+  const { orderId } = req.params;
+  const { username, email } = req.body;
+
+  if (!orderId) {
+    return res.status(400).json("Can't get the orderID from the params");
+  }
+
+  try {
+    // Update the order status to 'confirmed'
+    const confirmOrder = await OrderItem.findByIdAndUpdate(orderId, { status: 'confirmed' }, { new: true });
+
+    if (!confirmOrder) {
+      return res.status(404).json("Can't find the order with this ID");
     }
 
-    const cancelOrder= await OrderItem.findbyIdAndDelete(orderId)
-    if (!cancelOrder) {
-        return res.status(402).json("cant find the order with this id")
+    // Send confirmation email
+    const confirmOrderEmail = await sendOrderConfirmedEmail(email, username);
+    if (!confirmOrderEmail.success) {
+      return res.status(500).json("Some problem in the Email Section");
     }
 
-return res.status(200).json(" cancel order successfully ")
+    return res.status(200).json({ message: "Order confirmed successfully", order: confirmOrder });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json("An error occurred while confirming the order");
+  }
 }
-
-
 
 
 export const orderPrice = async (req, res) => {

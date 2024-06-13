@@ -8,6 +8,12 @@ const OderItemSchema=mongoose.Schema({
     price:{
         type:Number
     },
+    username:{
+type:String
+    },
+    email:{
+type:String
+    },
     user:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'users'

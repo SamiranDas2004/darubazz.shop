@@ -99,7 +99,7 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: "Password is not correct" });
     }
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET_KEY, { expiresIn: '6h' });
+    const token = jwt.sign({ userId: user._id , username:user.username , email:user.email}, process.env.JWT_SECRET_KEY, { expiresIn: '6h' });
 
     // Set token in HTTP-only cookie
     res.cookie('token', token, { httpOnly: true, secure: true, sameSite: 'strict' });

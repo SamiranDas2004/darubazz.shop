@@ -71,6 +71,9 @@ const Cart = () => {
 
     const decodedToken = jwtDecode(token);
     const userId = decodedToken.userId;
+    const username = decodedToken.username;
+    const email = decodedToken.email;
+    console.log(username,email);
     if (!userId) {
       console.log('User ID not found');
       return;
@@ -79,7 +82,7 @@ const Cart = () => {
     try {
       const orderPromises = cartItems.flatMap(cartItem =>
         cartItem.products.map(async product => {
-          const response = await axios.post(`http://localhost:8000/api/order/placeorder/${product._id}`, { userId });
+          const response = await axios.post(`http://localhost:8000/api/order/placeorder/${product._id}`, { userId ,username,email});
           console.log(response.data);
           return response;
         })
