@@ -82,3 +82,30 @@ export const getAllCartItems = async (req, res) => {
   
   
   
+
+
+  export const totalCartItems = async (req, res) => {
+    const { userId } = req.body;
+      
+    if (!userId) {
+      return res.status(400).json("userId is missing");
+    }
+  
+    try {
+   
+      const userCart = await Cart.findOne({ user: userId });
+      if (!userCart) {
+        return res.status(404).json("Cart for user not found");
+      }
+  
+     
+      const totalItems = userCart.products.length;
+  
+  
+      return res.status(200).json({ totalItems });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json("Internal Server Error");
+    }
+  };
+  
