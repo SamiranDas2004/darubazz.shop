@@ -86,21 +86,20 @@ export const getAllCartItems = async (req, res) => {
 
   export const totalCartItems = async (req, res) => {
     const { userId } = req.body;
-      
+  
     if (!userId) {
       return res.status(400).json("userId is missing");
     }
   
     try {
-   
-      const userCart = await Cart.findOne({ user: userId });
-      if (!userCart) {
+      // Find all cart documents for the given user ID
+      const userCarts = await Cart.find({ user: userId });
+      if (!userCarts || userCarts.length === 0) {
         return res.status(404).json("Cart for user not found");
       }
   
-     
-      const totalItems = userCart.products.length;
-  
+      // Calculate the total number of items in all carts
+      const totalItems = userCarts.reduce((acc, cart) => acc + cart.products.length, 0);
   
       return res.status(200).json({ totalItems });
     } catch (error) {
@@ -109,3 +108,27 @@ export const getAllCartItems = async (req, res) => {
     }
   };
   
+
+
+
+export const deleteUserCarts = async (req, res) => {
+  const { userId } = req.body;
+
+  if (!userId) {
+    return res.status(400).json("userId is missing");
+  }
+
+  try {
+    // Delete all cart documents for the given user ID
+    const result = await Cart.deleteMany({ user: userId });
+    
+    if (result.deletedCount === 0) {
+      return res.status(404).json("Cart for user not found");
+    }
+
+    return res.status(200).json({ message: `${result.deletedCount} carts deleted` });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json("Internal Server Error");
+  }
+};

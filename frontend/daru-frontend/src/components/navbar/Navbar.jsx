@@ -25,6 +25,41 @@ export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
+  const [cart,setCart]=useState()
+
+  useEffect(()=>{
+
+    const totalCartItems = async () => {
+      const token = localStorage.getItem('token');
+    
+      if (!token) {
+        console.log('not logged in');
+        return;
+      }
+    
+      const decodedToken = jwtDecode(token);
+      const userId = decodedToken.userId;
+    
+      if (!userId) {
+        console.log('userId not found');
+        return;
+      }
+    
+      console.log(userId);
+    
+      try {
+        const response = await axios.post("http://localhost:8000/api/product/cartitems", { userId });
+        setCart(response.data.totalItems); // Assuming setCart is a state setter function from useState
+        console.log(response.data);
+      } catch (error) {
+        console.error('Error:', error.message);
+      }
+    };
+    totalCartItems()
+  },[])
+
+
+
   const userId = async () => {
     const token = localStorage.getItem('token');
 
@@ -133,7 +168,7 @@ export default function Navbar() {
                       onClick={userId}
                       className="ml-4 text-white"
                     >
-<ShoppingCartIcon className="h-6 w-6 text-white" />
+<ShoppingCartIcon className="h-6 w-6 text-white" /> <p>{cart}</p>
                     </Button>
                 </button>
 
