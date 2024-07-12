@@ -35,6 +35,10 @@ app.use('/api/order',orderRouter)
 import addressRouter from './router/address.router.js';
 app.use('/api/address',addressRouter)
 
+import paymentRouter from './router/paymentrouter.js';
+app.use('/api/payment', paymentRouter);
+
+
 app.listen(port,async()=>{
    connectDB()
     console.log("the server is listening on port ",port);

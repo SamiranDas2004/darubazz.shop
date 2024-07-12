@@ -166,7 +166,7 @@ const Cart = () => {
                                       <img
                                         src={product.imageUrl}
                                         alt={product.productname}
-                                        className="h-24 w-24 object-cover object-center cursor-pointer"
+                                     className="h-24 w-24 object-cover object-center cursor-pointer shadow-md"
                                         onClick={() => imageChange(product.imageUrl)}
                                       />
                                     </div>
