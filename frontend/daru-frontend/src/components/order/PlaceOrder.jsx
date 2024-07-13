@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import {jwtDecode} from 'jwt-decode';
 
 function PlaceOrder() {
   const [price, setPrice] = useState(null); // Initialize price state
-  const { totalPrice } = useParams();
+  const { totalPrice, contactNumber } = useParams();
 
   useEffect(() => {
     setPrice(totalPrice);
@@ -19,6 +20,11 @@ function PlaceOrder() {
       document.body.removeChild(script); // Cleanup script when component unmounts
     };
   }, [totalPrice]);
+
+  const userDetails = localStorage.getItem("token");
+  const decodedToken = jwtDecode(userDetails);
+  const email = decodedToken.email;
+  const username = decodedToken.username;
 
   const handlePayment = async () => {
     try {
@@ -37,15 +43,15 @@ function PlaceOrder() {
         currency: data.currency,
         name: 'Darubazz',
         description: 'Test Transaction',
-        image: 'https://example.com/your_logo',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFg8hUPv515mVxxp2BQuRULGOtEXygUqqvmg&s',
         order_id: data.id,
         handler: function (response) {
           alert(`Payment Successful. Payment ID: ${response.razorpay_payment_id}`);
         },
         prefill: {
-          name: 'samiran',
-          email: 'john.doe@example.com',
-          contact: '8927750287'
+          name: username,
+          email: email,
+          contact: contactNumber
         },
         notes: {
           address: 'Razorpay Corporate Office'
@@ -64,13 +70,22 @@ function PlaceOrder() {
   };
 
   return (
-    <div className=''>
-      <div className='text-bold align-center justify-center'>
-        {price !== null ? price : 'Loading...'}
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full bg-white p-8 rounded-md shadow-md">
+        <h2 className="text-2xl font-semibold text-center mb-6">Order Summary</h2>
+        <div className="text-center text-lg mb-6">
+          <span className="font-bold">Total Price:</span> ₹{price !== null ? price : 'Loading...'}
+        </div>
+        <button
+          onClick={handlePayment}
+          disabled={price === null}
+          className={`w-full py-2 px-4 rounded-md text-white font-semibold ${
+            price === null ? 'bg-gray-400' : 'bg-blue-500 hover:bg-blue-600'
+          } focus:outline-none focus:bg-blue-600`}
+        >
+          Pay Now
+        </button>
       </div>
-      <button onClick={handlePayment} disabled={price === null}>
-        Pay Now
-      </button>
     </div>
   );
 }

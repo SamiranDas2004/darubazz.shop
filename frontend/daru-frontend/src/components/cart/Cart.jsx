@@ -4,6 +4,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import {jwtDecode} from 'jwt-decode';
+import {useDispatch} from 'react-redux'
+import { addProducts } from '../features/products/product.Slice';
+
 
 const Cart = () => {
   const { userId } = useParams();
@@ -13,6 +16,10 @@ const Cart = () => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [image, setImage] = useState('');
   const navigate = useNavigate();
+
+  const dispatch=useDispatch()
+
+
 
   // Function to fetch cart items from backend
   const fetchCartItems = async () => {
@@ -28,6 +35,12 @@ const Cart = () => {
       setMessage(`Error: ${error.response?.data?.message || error.message}`);
     }
   };
+
+//reduc-toolkit
+  const addTodoHandeler=(e)=>{
+    e.preventDefault()
+    dispatch(addProducts())
+  }
 
   // Function to calculate total price
   const calculateTotalPrice = (cartItems) => {

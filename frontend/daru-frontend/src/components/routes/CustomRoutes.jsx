@@ -28,7 +28,7 @@ function CustomRoutes() {
             <Route path='/user/login' element={<Login/>}/>
             <Route path='/user/seller' element={<CreateProduct/>}/>
             <Route path='/seller/products/:username' element={<OneProduct/>}/>
-            <Route path='/payment/:totalPrice' element={<PlaceOrder/>}/>
+            <Route path="/payment/:totalPrice/:contactNumber/:username" element={<PlaceOrder />} />
             <Route path='/seller/products/:username/:id' element={<UpdateProduct/>}/>
             <Route path='/cart/:userId' element={<Cart/>}/>
             <Route path='/yourOrders/:userId' element={<YourOrders/>}/>

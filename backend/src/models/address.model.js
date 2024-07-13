@@ -20,6 +20,9 @@ ref:'users'
     },
     locatioon:{
         type:String
+    },
+    contactNumber:{
+        type:Number
     }
 },{
     timestamps:true

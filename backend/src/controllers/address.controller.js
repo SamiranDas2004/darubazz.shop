@@ -3,7 +3,7 @@ import User from "../models/user.model.js";
 
 export const createAddress = async (req, res) => {
     try {
-        const { username, state, city, zipcode, location } = req.body;
+        const { username, state, city, zipcode, location,contactNumber } = req.body;
 
         // Check if any required field is missing
         if (!username || !state || !city || !zipcode || !location) {
@@ -23,7 +23,8 @@ export const createAddress = async (req, res) => {
             state,
             city,
             zipcode,
-            location
+            location,
+            contactNumber
         });
 
         // Check if the address was successfully created
