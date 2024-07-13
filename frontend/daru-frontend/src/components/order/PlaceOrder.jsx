@@ -35,7 +35,7 @@ function PlaceOrder() {
         key: 'rzp_test_0JAM9k2xU1i9q3', // Use your Razorpay key here
         amount: data.amount,
         currency: data.currency,
-        name: 'Your Company Name',
+        name: 'Darubazz',
         description: 'Test Transaction',
         image: 'https://example.com/your_logo',
         order_id: data.id,
