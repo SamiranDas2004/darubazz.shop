@@ -43,7 +43,7 @@ function PlaceOrder() {
           alert(`Payment Successful. Payment ID: ${response.razorpay_payment_id}`);
         },
         prefill: {
-          name: 'John Doe',
+          name: 'samiran',
           email: 'john.doe@example.com',
           contact: '8927750287'
         },
