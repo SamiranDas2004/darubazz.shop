@@ -28,7 +28,7 @@ function PlaceOrder() {
 
   const userDetails = localStorage.getItem("token");
   const decodedToken = jwtDecode(userDetails);
-  const email = decodedToken.email;
+  const userId = decodedToken.userId;
   const username = decodedToken.username;
 const navigate=useNavigate()
 
@@ -55,10 +55,9 @@ const navigate=useNavigate()
           // Handle successful payment
           alert(`Payment Successful. Payment ID: ${response.razorpay_payment_id}`);
           // Dispatch action to add products if needed
-          if (response) {
-            dispatch(addProducts(products));
-          }
+          const res =  axios.post('http://localhost:8000/api/order/', { products: products },{userId:userId});
 
+console.log(res.data);
           navigate("/customerorders")
 
         },

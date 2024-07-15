@@ -144,3 +144,27 @@ export const ordersForOneSeller = async (req, res) => {
   
 
 
+
+export const UserOrders = async (req, res) => {
+  const { productIds } = req.body;
+
+  if (!Array.isArray(productIds)) {
+    return res.status(400).json({ message: 'Product IDs must be an array' });
+  }
+
+  try {
+    // Find products by their IDs
+    const products = await Product.find({ _id: { $in: productIds } });
+
+    if (!products.length) {
+      return res.status(404).json({ message: 'No products found' });
+    }
+
+    res.status(200).json({
+      message: 'Products retrieved successfully',
+      data: products
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal Server Error', error: error.message });
+  }
+};
