@@ -14,6 +14,7 @@ import Cart from '../cart/Cart'
 import PlaceOrder from '../order/PlaceOrder'
 import YourOrders from '../seller/YourOrders'
 import DifferntCatagory from '../Category/DifferntCatagory'
+import UserOrder from '../order/UserOrder'
 function CustomRoutes() {
   return (
     <div>
@@ -38,6 +39,7 @@ function CustomRoutes() {
             <Route path='/:category' element={<DifferntCatagory/>} />
             <Route path='/:category' element={<DifferntCatagory/>} />
             <Route path='/:category' element={<DifferntCatagory/>} />
+            <Route path='/customerorders' element={<UserOrder/>} />
         </Routes>
     </div>
   )

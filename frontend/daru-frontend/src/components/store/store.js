@@ -5,3 +5,4 @@ export const store=configureStore({
     reducer:productSlice
 })
 
+export default store;

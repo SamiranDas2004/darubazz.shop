@@ -72,7 +72,7 @@ export default function Category() {
                 className="group relative cursor-pointer"
                 onClick={() => handleNavigate(callout.href)}
               >
-                <div className="relative h-80 w-full overflow-hidden rounded-lg bg-white sm:aspect-h-1 sm:aspect-w-2 lg:aspect-h-1 lg:aspect-w-1 group-hover:opacity-75 sm:h-64">
+                <div className="relative h-64 sm:h-80 md:h-96 w-full overflow-hidden rounded-lg bg-white">
                   <img
                     src={callout.imageSrc}
                     alt={callout.imageAlt}

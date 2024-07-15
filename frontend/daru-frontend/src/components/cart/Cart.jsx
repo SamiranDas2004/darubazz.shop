@@ -27,6 +27,10 @@ const Cart = () => {
       const response = await axios.get(`http://localhost:8000/api/user/cartitems/${userId}`);
       if (response.status === 200) {
         setCartItems(response.data);
+        const cartItems = response.data;
+        const _id=cartItems.map(item => item._id)
+        
+      dispatch(addProducts(_id));
         calculateTotalPrice(response.data); // Calculate total price when cart items are fetched
       } else {
         setMessage("Can't get the cart items");
@@ -37,10 +41,7 @@ const Cart = () => {
   };
 
 //reduc-toolkit
-  const addTodoHandeler=(e)=>{
-    e.preventDefault()
-    dispatch(addProducts())
-  }
+ 
 
   // Function to calculate total price
   const calculateTotalPrice = (cartItems) => {

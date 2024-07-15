@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
-import {jwtDecode} from 'jwt-decode';
+import { useNavigate, useParams } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
+import { useDispatch, useSelector } from 'react-redux';
+import { addProducts } from '../features/products/product.Slice';
 
 function PlaceOrder() {
   const [price, setPrice] = useState(null); // Initialize price state
   const { totalPrice, contactNumber } = useParams();
+
+  const products = useSelector(state => state.products); // Assuming 'products' is the part of state you dispatched
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setPrice(totalPrice);
@@ -25,6 +30,7 @@ function PlaceOrder() {
   const decodedToken = jwtDecode(userDetails);
   const email = decodedToken.email;
   const username = decodedToken.username;
+const navigate=useNavigate()
 
   const handlePayment = async () => {
     try {
@@ -46,7 +52,15 @@ function PlaceOrder() {
         image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFg8hUPv515mVxxp2BQuRULGOtEXygUqqvmg&s',
         order_id: data.id,
         handler: function (response) {
+          // Handle successful payment
           alert(`Payment Successful. Payment ID: ${response.razorpay_payment_id}`);
+          // Dispatch action to add products if needed
+          if (response) {
+            dispatch(addProducts(products));
+          }
+
+          navigate("/customerorders")
+
         },
         prefill: {
           name: username,
