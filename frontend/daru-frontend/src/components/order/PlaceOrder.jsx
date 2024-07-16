@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
-import { useDispatch, useSelector } from 'react-redux';
-import { addProducts } from '../features/products/product.Slice';
+import {jwtDecode} from 'jwt-decode';
+import { useSelector } from 'react-redux';
 
 function PlaceOrder() {
   const [price, setPrice] = useState(null); // Initialize price state
   const { totalPrice, contactNumber } = useParams();
 
-  const products = useSelector(state => state.products); // Assuming 'products' is the part of state you dispatched
-  const dispatch = useDispatch();
+  const products = useSelector(state => state.products);
+  console.log(products);
 
   useEffect(() => {
     setPrice(totalPrice);
@@ -29,8 +28,9 @@ function PlaceOrder() {
   const userDetails = localStorage.getItem("token");
   const decodedToken = jwtDecode(userDetails);
   const userId = decodedToken.userId;
+  const email = decodedToken.email;
   const username = decodedToken.username;
-const navigate=useNavigate()
+  const navigate = useNavigate();
 
   const handlePayment = async () => {
     try {
@@ -51,15 +51,13 @@ const navigate=useNavigate()
         description: 'Test Transaction',
         image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFg8hUPv515mVxxp2BQuRULGOtEXygUqqvmg&s',
         order_id: data.id,
-        handler: function (response) {
+        handler: async function (response) {
           // Handle successful payment
           alert(`Payment Successful. Payment ID: ${response.razorpay_payment_id}`);
           // Dispatch action to add products if needed
-          const res =  axios.post('http://localhost:8000/api/order/', { products: products },{userId:userId});
-
-console.log(res.data);
-          navigate("/customerorders")
-
+          const productIds = products.map(product => product._id[0]);
+        await axios.post("http://localhost:8000/api/order/userorder", { userId, productIds });
+          navigate("/customerorders");
         },
         prefill: {
           name: username,

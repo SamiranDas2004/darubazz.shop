@@ -6,22 +6,7 @@ function UserOrder() {
   const response = useSelector(state => state.products);
   const [products, setProducts] = useState([]);
 
-  useEffect(() => {
-    // Extract product IDs from the response
-    const productIds = response.flatMap(item => item._id);
-
-    const fetchProducts = async () => {
-      try {
-        const res = await axios.post('http://localhost:8000/api/order/', { products: productIds });
-        setProducts(res.data.data); // Assuming the response data structure
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      }
-    };
-
-    fetchProducts();
-  }, [response]);
-
+ 
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto bg-white p-8 rounded-md shadow-md">

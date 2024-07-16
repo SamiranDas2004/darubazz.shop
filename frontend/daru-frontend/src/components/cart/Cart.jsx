@@ -28,7 +28,8 @@ const Cart = () => {
       if (response.status === 200) {
         setCartItems(response.data);
         const cartItems = response.data;
-        const _id=cartItems.map(item => item._id)
+        const _id = cartItems.map(item => item.productId);
+        console.log(_id);
         
       dispatch(addProducts(_id));
         calculateTotalPrice(response.data); // Calculate total price when cart items are fetched
@@ -97,7 +98,7 @@ const Cart = () => {
       const orderPromises = cartItems.flatMap(cartItem =>
         cartItem.products.map(async product => {
           const response = await axios.post(`http://localhost:8000/api/order/placeorder/${product._id}`, { userId ,username,email});
-          console.log(response.data);
+          // console.log(response.data);
           return response;
         })
       );

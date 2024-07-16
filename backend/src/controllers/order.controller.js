@@ -2,7 +2,7 @@ import { sendOrderCancelEmail, sendOrderConfirmedEmail } from "../helper/sendVer
 import OrderItem from "../models/orderItem.model.js";
 import Product from "../models/product.model.js";
 import User from "../models/user.model.js";
-
+import ConfirmOrder from "../models/confirmOrder.model.js";
 
 export const createOrderItem = async (req, res) => {
   const { orderId } = req.params; // Extract productId from URL parameters
@@ -29,7 +29,7 @@ export const createOrderItem = async (req, res) => {
 
       // Save the order item to the database
       const savedOrderItem = await orderItem.save();
-console.log(savedOrderItem);
+
       return res.status(201).json({ message: "Order item created successfully", orderItem: savedOrderItem });
   } catch (error) {
       return res.status(500).json({ message: "An error occurred", error });
@@ -141,30 +141,58 @@ export const ordersForOneSeller = async (req, res) => {
   }
 };
 
-  
 
+export const userConfirmOrders = async (req, res) => {
+  const { userId, productIds } = req.body;
 
+  // Log the incoming request
+  console.log('Incoming request:', req.body);
 
-export const UserOrders = async (req, res) => {
-  const { productIds } = req.body;
-
-  if (!Array.isArray(productIds)) {
-    return res.status(400).json({ message: 'Product IDs must be an array' });
+  // Check if user exists
+  const findUser = await User.findById(userId);
+  if (!findUser) {
+    return res.status(401).json({ message: 'No user with this userId' });
   }
 
-  try {
-    // Find products by their IDs
-    const products = await Product.find({ _id: { $in: productIds } });
+  // Validate and collect products
 
-    if (!products.length) {
-      return res.status(404).json({ message: 'No products found' });
+
+
+  let products = [];
+  for (let i = 0; i < productIds.length; i++) {
+    let product = await Product.findById(productIds[i]);
+    if (product) {
+      products.push(product._id);
+    } else {
+      return res.status(404).json({ message: `Product with ID ${productIds[i]} not found` });
     }
+  }
 
-    res.status(200).json({
-      message: 'Products retrieved successfully',
-      data: products
+
+  // Check if the user already has a confirmed order
+  const existingOrder = await ConfirmOrder.findOne({ user: userId });
+
+  if (existingOrder) {
+    // If user already has an order, update it without removing duplicates
+    existingOrder.products = existingOrder.products.concat(products);
+    try {
+      await existingOrder.save();
+      return res.status(200).json({ message: 'Order updated', order: existingOrder });
+    } catch (error) {
+      return res.status(500).json({ message: 'Error updating order', error: error.message });
+    }
+  } else {
+    // If user does not have an order, create a new one
+    const confirmOrder = new ConfirmOrder({
+      user: userId,
+      products: products
     });
-  } catch (error) {
-    res.status(500).json({ message: 'Internal Server Error', error: error.message });
+
+    try {
+      await confirmOrder.save();
+      return res.status(201).json({ message: 'Order confirmed', order: confirmOrder });
+    } catch (error) {
+      return res.status(500).json({ message: 'Error confirming order', error: error.message });
+    }
   }
 };
