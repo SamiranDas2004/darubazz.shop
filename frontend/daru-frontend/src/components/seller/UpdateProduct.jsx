@@ -1,27 +1,24 @@
 import axios from 'axios';
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import { useState, useRef } from 'react';
 
 function UpdateProduct() {
   const [productname, setProductname] = useState('');
   const [price, setPrice] = useState('');
   const [category, setCategory] = useState('');
   const [brand, setBrand] = useState('');
-  const [image, setImage] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const [username, setUsername] = useState('');
   const fileInputRef = useRef(null);
 
   const { id } = useParams();
-  console.log('id is ', id);
 
   const handleUpdate = async (e) => {
     e.preventDefault();
 
-    if (!(productname || price || category || brand || image || username)) {
-      setMessage('All fields and image are required');
+    if (!(productname || price || category || brand || imageUrl)) {
+      setMessage('At least one field must be provided for update');
       return;
     }
 
@@ -29,12 +26,11 @@ function UpdateProduct() {
     setMessage('');
 
     const formData = new FormData();
-    formData.append('productname', productname);
-    formData.append('price', price);
-    formData.append('category', category);
-    formData.append('brand', brand);
-    formData.append('imageUrl', image);
-    formData.append('username', username);
+    if (productname) formData.append('productname', productname);
+    if (price) formData.append('price', price);
+    if (category) formData.append('category', category);
+    if (brand) formData.append('brand', brand);
+    if (imageUrl) formData.append('imageUrl', imageUrl);
 
     try {
       const response = await axios.put(
@@ -48,8 +44,7 @@ function UpdateProduct() {
         setPrice('');
         setCategory('');
         setBrand('');
-        setImage(null);
-        setUsername('');
+        setImageUrl(null);
         fileInputRef.current.value = '';
       } else {
         setMessage('Failed to update product');
@@ -63,18 +58,9 @@ function UpdateProduct() {
 
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white shadow-md rounded-lg">
-    <h2 className="text-2xl font-bold text-center mb-6">Update Your Products</h2>
+      <h2 className="text-2xl font-bold text-center mb-6">Update Your Products</h2>
       {message && <p className="mb-4 text-red-500">{message}</p>}
       <form onSubmit={handleUpdate} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">User Name</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-          />
-        </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">Product Name</label>
           <input
@@ -115,7 +101,7 @@ function UpdateProduct() {
           <label className="block text-sm font-medium text-gray-700">Image</label>
           <input
             type="file"
-            onChange={(e) => setImage(e.target.files[0])}
+            onChange={(e) => setImageUrl(e.target.files[0])}
             ref={fileInputRef}
             className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
           />

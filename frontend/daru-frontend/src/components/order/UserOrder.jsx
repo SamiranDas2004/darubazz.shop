@@ -1,12 +1,49 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import {jwtDecode} from 'jwt-decode';
 
 function UserOrder() {
   const response = useSelector(state => state.products);
+  
+  const latestResponse = response[response.length - 1];
+
+  // Check if latestResponse is an array
+  const productsId = Array.isArray(latestResponse) ? latestResponse.map(id => id) : [];
+
   const [products, setProducts] = useState([]);
 
- 
+  useEffect(() => {
+    const showUserAllOrders = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        
+        if (!token) {
+          console.log('not logged in');
+          return;
+        }
+
+        const decodedToken = jwtDecode(token);
+        const userId = decodedToken.userId;
+console.log('user is',userId);
+        const userCartResponse = await axios.get(`http://localhost:8000/api/order/showuserorders/${userId}`);
+        console.log(userCartResponse.data);
+
+        const productsArray = userCartResponse.data.findResult.products;
+
+        const showAllOrdersResponse = await axios.post("http://localhost:8000/api/order/showallorders", { productsIds: productsArray });
+        console.log(showAllOrdersResponse.data);
+        setProducts(showAllOrdersResponse.data.products);
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+
+    showUserAllOrders();
+  }, []);
+
+
+  console.log('this is products',products);
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto bg-white p-8 rounded-md shadow-md">
@@ -24,14 +61,18 @@ function UserOrder() {
                 <p className="text-gray-600">{product.brand}</p>
                 <p className="text-gray-800 font-semibold">₹{product.price}</p>
               </div>
+              <div>
+                <button ></button>
+                <button></button>
+              </div>
             </div>
           ))
         ) : (
-          <p className="text-gray-600">You have no orders yet.</p>
+          <p className="text-gray-600">No Orders Yet</p>
         )}
       </div>
     </div>
   );
 }
 
-export default UserOrder;
+export default UserOrder

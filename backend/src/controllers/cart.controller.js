@@ -56,29 +56,39 @@ export const getAllCartItems = async (req, res) => {
 
   export const reMoveFromCart = async (req, res) => {
     try {
-      const { productId } = req.params;
       const { userId } = req.body;
-  
+  const {productId}=req.params
       if (!productId || !userId) {
         return res.status(400).json({ message: "ProductId and UserId are required" });
       }
   
-      const userCart = await Cart.findOneAndUpdate(
-        { user: userId },
-        { $pull: { products: productId } }, // Ensure this matches the schema of your products array
-        { new: true }
-      );
+      // Find the cart for the user
+      const userCart = await Cart.findOne({ user: userId });
   
       if (!userCart) {
-        return res.status(404).json({ message: "No cart found for this user" });
+        return res.status(404).json({ message: "Cart not found for the given user" });
       }
   
-      return res.status(200).json({ message: "Product removed from cart", userCart });
+      // Filter out the product from the cart's products array
+      const updatedProducts = userCart.products.filter(product => product._id.toString() !== productId);
+  
+      // If no products remain, you might want to delete the cart or handle an empty cart case
+      if (updatedProducts.length === 0) {
+        await Cart.findByIdAndDelete(userCart._id);
+        return res.status(200).json({ message: "Cart is empty and has been deleted" });
+      }
+  
+      // Update the cart with the remaining products
+      userCart.products = updatedProducts;
+      await userCart.save();
+  
+      return res.status(200).json({ message: "Product removed from cart", updatedCart: userCart });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: error.message });
     }
   };
+  
   
   
   
@@ -132,3 +142,5 @@ export const deleteUserCarts = async (req, res) => {
     return res.status(500).json("Internal Server Error");
   }
 };
+
+

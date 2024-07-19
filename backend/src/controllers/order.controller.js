@@ -3,6 +3,7 @@ import OrderItem from "../models/orderItem.model.js";
 import Product from "../models/product.model.js";
 import User from "../models/user.model.js";
 import ConfirmOrder from "../models/confirmOrder.model.js";
+import Cart from "../models/cart.models.js";
 
 export const createOrderItem = async (req, res) => {
   const { orderId } = req.params; // Extract productId from URL parameters
@@ -196,3 +197,96 @@ export const userConfirmOrders = async (req, res) => {
     }
   }
 };
+
+
+
+export const showUserOrders=async(req,res)=>{
+try {
+    const {userId}=req.params;
+ 
+    if (!userId) {
+      return res.status(400).json({message:"userId is't present"})
+    }
+  
+    const findResult= await ConfirmOrder.findOne({user:userId})
+  if (!findResult) {
+    return res.status(401).json({message:" user not found"})
+  }
+    return res.status(200).json({message:"ordres fetch successsfuly",findResult})
+} catch (error) {
+  return res.status(500).json({ message: 'Error in showing orders', error: error.message });
+}
+
+
+}
+
+
+export const cancelUserOrder = async (req, res) => {
+  const { productId, userId } = req.body;
+
+  try {
+    // Find the user's order by userId
+    const findUserOrder = await ConfirmOrder.findOne({ user: userId });
+
+    if (!findUserOrder) {
+      return res.status(404).json({ message: "Order not found for the given user" });
+    }
+
+    // Filter out the specified product from the order's products
+    const updatedProducts = findUserOrder.products.filter(id => id.toString() !== productId);
+
+    // If no products remain, you might want to handle the order deletion or an empty product list case
+    if (updatedProducts.length === 0) {
+      await ConfirmOrder.findByIdAndDelete(findUserOrder._id);
+      return res.status(200).json({ message: "Order has been canceled and deleted" });
+    }
+
+    // Update the order with the remaining products
+    findUserOrder.products = updatedProducts;
+    await findUserOrder.save();
+
+    return res.status(200).json({ message: "Product removed from the order successfully", updatedOrder: findUserOrder });
+  } catch (error) {
+    return res.status(500).json({ message: "An error occurred", error });
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export const showFinalProductsToUser = async (req, res) => {
+  try {
+    const { productsIds } = req.body;
+    console.log(productsIds);
+
+    
+    let products = [];
+    for (let i = 0; i < productsIds.length; i++) {
+      let product = await Product.findById(productsIds[i]);
+   
+
+      products.push(product)
+   
+    }
+    
+    console.log(products);
+    if (products.length === 0) {
+      return res.status(200).send("No orders");
+    }
+    
+    return res.status(200).json({ message: "Fetched the orders", products });
+  } catch (error) {
+    return res.status(500).json({ message: 'Error in fetching all orders', error: error.message });
+  }
+};
+

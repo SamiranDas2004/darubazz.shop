@@ -26,12 +26,17 @@ const Cart = () => {
     try {
       const response = await axios.get(`http://localhost:8000/api/user/cartitems/${userId}`);
       if (response.status === 200) {
+        console.log(response.data);
         setCartItems(response.data);
         const cartItems = response.data;
-        const _id = cartItems.map(item => item.productId);
-        console.log(_id);
-        
-      dispatch(addProducts(_id));
+        const productIds = cartItems
+        .map(item => item.products.map(product => product._id))
+        .flat();
+      
+      // Dispatch the product IDs
+      dispatch(addProducts(productIds));
+      
+      console.log(productIds);
         calculateTotalPrice(response.data); // Calculate total price when cart items are fetched
       } else {
         setMessage("Can't get the cart items");
@@ -98,7 +103,7 @@ const Cart = () => {
       const orderPromises = cartItems.flatMap(cartItem =>
         cartItem.products.map(async product => {
           const response = await axios.post(`http://localhost:8000/api/order/placeorder/${product._id}`, { userId ,username,email});
-          // console.log(response.data);
+          console.log(response.data);
           return response;
         })
       );

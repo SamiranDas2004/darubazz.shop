@@ -55,7 +55,15 @@ function PlaceOrder() {
           // Handle successful payment
           alert(`Payment Successful. Payment ID: ${response.razorpay_payment_id}`);
           // Dispatch action to add products if needed
-          const productIds = products.map(product => product._id[0]);
+         // Extract the first array from the _id property
+const lastArray = products[products.length-1]._id;
+console.log("last Array of Ids:", lastArray);
+
+// Map through the first array to get individual ids
+const productIds = lastArray.map(id => id);
+console.log("Product IDs:", productIds);
+
+
         await axios.post("http://localhost:8000/api/order/userorder", { userId, productIds });
           navigate("/customerorders");
         },

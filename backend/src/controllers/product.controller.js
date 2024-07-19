@@ -104,11 +104,12 @@ export const findbyid = async (req, res) => {
   }
 };
 
+
 export const updateProduct = async (req, res) => {
   const { productId } = req.params; // Extract productId from URL parameters
 
   if (!productId) {
-    return res.status(402).json("product id is not found")
+    return res.status(402).json("Product ID is not found");
   }
   const { productname, price, category, brand, imageUrl } = req.body;
 
@@ -121,7 +122,7 @@ export const updateProduct = async (req, res) => {
     }
 
     // Check if there's any data to update
-    if (!(productname || price || category || brand || imageUrl)) {
+    if (!productname && !price && !category && !brand && !imageUrl) {
       return res.status(402).json({ message: "Need some data to update" });
     }
 
