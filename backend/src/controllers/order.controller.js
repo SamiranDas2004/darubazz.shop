@@ -243,6 +243,7 @@ export const cancelUserOrder = async (req, res) => {
 
     // Update the order with the remaining products
     findUserOrder.products = updatedProducts;
+    console.log(findUserOrder);
     await findUserOrder.save();
 
     return res.status(200).json({ message: "Product removed from the order successfully", updatedOrder: findUserOrder });
