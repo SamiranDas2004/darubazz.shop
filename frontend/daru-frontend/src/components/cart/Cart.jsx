@@ -51,6 +51,7 @@ const Cart = () => {
 
   // Function to calculate total price
   const calculateTotalPrice = (cartItems) => {
+
     let totalPrice = 0;
     cartItems.forEach(cartItem => {
       cartItem.products.forEach(product => {
