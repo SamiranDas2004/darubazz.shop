@@ -24,6 +24,10 @@ const productSchema=mongoose.Schema(
         user:{
             type:mongoose.Schema.Types.ObjectId,
             ref:"users"
+        },
+        rating:{
+            type:Number,
+            default:0 
         }
 
     },

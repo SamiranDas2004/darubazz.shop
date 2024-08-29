@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import HoverRating from './Rate';
 function AllProducts() {
   const [products, setProducts] = useState([]);
   const [sortOrder, setSortOrder] = useState('');
@@ -77,6 +77,7 @@ function AllProducts() {
               <div className="w-full h-48 overflow-hidden rounded-t-lg">
                 <img src={product.imageUrl} alt={product.productname} className="w-full h-full object-contain" />
               </div>
+              <HoverRating/>
               <h3 className="text-xl font-bold mt-2">{product.productname}</h3>
               <p><strong>Brand:</strong> {product.brand}</p>
               <p><strong>Price:</strong> {product.price}</p>
@@ -85,6 +86,7 @@ function AllProducts() {
           ))}
         </div>
       </div>
+      
     </div>
   );
 } 

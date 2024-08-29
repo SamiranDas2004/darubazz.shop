@@ -3,7 +3,7 @@ import OrderItem from "../models/orderItem.model.js";
 import Product from "../models/product.model.js";
 import User from "../models/user.model.js";
 import ConfirmOrder from "../models/confirmOrder.model.js";
-import Cart from "../models/cart.models.js";
+
 
 export const createOrderItem = async (req, res) => {
   const { orderId } = req.params; // Extract productId from URL parameters
@@ -219,6 +219,40 @@ try {
 
 
 }
+
+
+export const IsAllowedToRate = async (req, res) => {
+  try {
+    const { userId,Id } = req.body;
+    // const {  } = req.params;
+
+    // Find the user's order document
+    const findUser = await ConfirmOrder.findOne({ user: userId });
+
+    if (!findUser) {
+      return res.status(400).json({ message: "Order not found for this user" });
+    }
+
+  
+console.log(Id);
+
+    // Iterate through the products array
+    for (let i = 0; i < findUser.products.length; i++) {
+      // Corrected reference to the product
+      if (Id == findUser.products[i]) {
+        console.log(findUser.products[i]);
+        return res.status(200).send(true);
+      }
+    }
+
+    // If no match is found in the loop
+    return res.status(400).json({ message: "You are Not allowed to Rate this product" });
+
+  } catch (error) {
+    return res.status(500).json({ message: 'Error in rating orders', error: error.message });
+  }
+};
+
 
 
 export const cancelUserOrder = async (req, res) => {
