@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import BasicRating from "../allProducts/Rate";
-
+import toast, { Toaster } from 'react-hot-toast';
 function Order() {
   const [order, setOrder] = useState(null);
   const [message, setMessage] = useState("");
@@ -59,44 +59,51 @@ console.log(ratingValue);
       console.log(response.status);
 
       if (response.status === 200) {
-        setMessage("Added to cart");
+        toast.success("Added To Cart")
       } else {
-        setMessage("Cannot create the cart");
+        toast.error("Cannot create the cart");
       }
     } catch (error) {
       setMessage(`Error: ${error.response?.data?.message || error.message}`);
     }
   };
 
-  const IsAllowedRating = async (id,value) => {
+  const IsAllowedRating = async (id, value) => {
     const token = localStorage.getItem("token");
-
+  console.log(value);
+  
     if (!token) {
       console.log("User must be logged in");
       return;
     }
-
+  
     try {
       const decodedToken = jwtDecode(token);
       console.log("User information from token", decodedToken.userId);
-
+  
       const userId = decodedToken.userId;
       const response = await axios.post(
         "http://localhost:8000/api/order/ratingallowornot",
         { userId, Id: id }
       );
-
-      const sendRating= await axios.post("http://localhost:8000/api/order/giverating",{userId, productId:id,value:ratingValue})
-      console.log(sendRating.data);
-      
-console.log(response.data);
-
-      setIsAllowedOrnot(response.data);
+  
+      if (response.data) {
+        const sendRating = await axios.post(
+          "http://localhost:8000/api/order/giverating",
+          { userId, productId: id, value: value }
+        );
+        console.log(sendRating.data);
+        setIsAllowedOrnot(true);  // Assuming this means rating was allowed
+      } else {
+        setIsAllowedOrnot(false);  // Rating not allowed
+      }
+  
       console.log(isAllowdornot);
     } catch (error) {
       console.log(error);
     }
   };
+  
 
   if (!order) {
     return <p>Loading...</p>;
@@ -115,11 +122,13 @@ console.log(response.data);
             alt={order.productname}
           />
         </div>
-        <div onClick={() => IsAllowedRating(order._id)}>
-          <p className=" font-bold font-serif">    Rate This Product: {isAllowdornot ? `Your Gave ${ratingValue}⭐` : "Not Allowed"}</p>
-          <BasicRating value={ratingValue} setValue={setRatingValue} />
-          {/* Pass props */}
-        </div>
+        <div onClick={() => IsAllowedRating(order._id, ratingValue)}>
+  <p className=" font-bold font-serif">
+    Rate This Product: {isAllowdornot ? `You Gave ${ratingValue}⭐` : ""}
+  </p>
+  <BasicRating value={ratingValue} setValue={setRatingValue} />
+</div>
+
      
       </div>
       <div className="px-6 py-4">
@@ -143,6 +152,7 @@ console.log(response.data);
       >
         Add to Cart
       </button>
+      <Toaster position="top-right" reverseOrder={false} />
     </div>
   );
 }

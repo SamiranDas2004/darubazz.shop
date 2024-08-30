@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -18,26 +17,26 @@ function Login() {
             const response = await axios.post("http://localhost:8000/api/user/login", user);
             if (response.status === 200) {
                 const token = response.data.token;
-               
                 localStorage.setItem('token', token);
-                toast.success('Login successful!');  // Show success toast
+                toast.success('Login successful!');
                 setTimeout(() => { navigate('/product') }, 2000);
             } else {
                 toast.error("Login failed");
             }
         } catch (error) {
-            toast.error('Login failed. Please check your credentials.');  // Show error toast
+            toast.error('Login failed. Please check your credentials.');
             console.log(error.message);
         }
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-lg">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-200 to-purple-200 py-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-2xl">
                 <div>
-                    <h2 className="text-center text-3xl font-extrabold text-gray-900 mb-6">
+                    <h2 className="text-center text-4xl font-extrabold text-gray-900 mb-6">
                         Sign in to your account
                     </h2>
+                    <p className="text-center text-gray-600 mb-8">Access your dashboard and manage your account</p>
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <input type="hidden" name="remember" defaultValue="true" />
@@ -48,7 +47,8 @@ function Login() {
                                 value={user.email}
                                 onChange={(e) => setUser({ ...user, email: e.target.value })}
                                 placeholder="Email address"
-                                type="email" id="email-address" className="appearance-none rounded-md block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required
+                                type="email" id="email-address" className="appearance-none rounded-md block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                required
                             />
                         </div>
                         <div>
@@ -57,13 +57,14 @@ function Login() {
                                 value={user.password}
                                 onChange={(e) => setUser({ ...user, password: e.target.value })}
                                 placeholder="Password"
-                                type="password" id="password" className="appearance-none rounded-md block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required
+                                type="password" id="password" className="appearance-none rounded-md block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                required
                             />
                         </div>
                     </div>
                     <div className="flex items-center justify-between">
                         <div className="text-sm">
-                            <Link to='/user/signup' className="font-medium text-blue-600 hover:text-blue-500">
+                            <Link to='/user/signup' className="font-medium text-blue-600 hover:text-blue-500 transition-colors">
                                 Don't have an account? Sign up
                             </Link>
                         </div>
@@ -71,7 +72,7 @@ function Login() {
                     <div>
                         <button
                             type="submit"
-                            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-transform transform hover:scale-105"
+                            className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-transform transform hover:scale-105"
                         >
                             <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                                 <svg className="h-5 w-5 text-blue-500 group-hover:text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -90,4 +91,3 @@ function Login() {
 }
 
 export default Login;
-

@@ -1,20 +1,15 @@
 import { Fragment, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import {
-  Disclosure,
-  Menu,
-  Transition,
-} from '@headlessui/react';
+import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import { Button } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 const navigation = [
   { name: 'Home', href: '/', current: true },
   { name: 'Products', href: '/product', current: false },
-
 ];
 
 function classNames(...classes) {
@@ -24,59 +19,43 @@ function classNames(...classes) {
 export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
+  const [cart, setCart] = useState(0); // Initialize cart to 0
 
-  const [cart,setCart]=useState()
-
-  useEffect(()=>{
-
+  useEffect(() => {
     const totalCartItems = async () => {
       const token = localStorage.getItem('token');
-    
       if (!token) {
         console.log('not logged in');
         return;
       }
-    
       const decodedToken = jwtDecode(token);
       const userId = decodedToken.userId;
-    
       if (!userId) {
         console.log('userId not found');
         return;
       }
-    
-      console.log(userId);
-    
       try {
         const response = await axios.post("http://localhost:8000/api/product/cartitems", { userId });
-        setCart(response.data.totalItems); // Assuming setCart is a state setter function from useState
-        console.log(response.data);
+        setCart(response.data.totalItems || 0); // Default to 0 if totalItems is undefined
       } catch (error) {
         console.error('Error:', error.message);
       }
     };
-    totalCartItems()
-  },[cart])
+    totalCartItems();
+  }, []);
 
-
-
-  const userId = async () => {
+  const handleUserIdClick = async () => {
     const token = localStorage.getItem('token');
-
     if (!token) {
       console.log('not logged in');
       return;
     }
-
     const decodedToken = jwtDecode(token);
     const userId = decodedToken.userId;
-    console.log(decodedToken.username);
-    
     if (!userId) {
       console.log('userId not found');
       return;
     }
-
     navigate(`/cart/${userId}`);
   };
 
@@ -112,7 +91,6 @@ export default function Navbar() {
           <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
             <div className="relative flex h-16 items-center justify-between">
               <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-                {/* Mobile menu button */}
                 <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                   <span className="sr-only">Open main menu</span>
                   {open ? (
@@ -122,7 +100,7 @@ export default function Navbar() {
                   )}
                 </Disclosure.Button>
               </div>
-              <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+              <div className="flex flex-1 items-center justify-between sm:items-stretch sm:justify-start">
                 <div className="flex flex-shrink-0 items-center">
                   <img
                     className="h-8 w-auto"
@@ -130,52 +108,36 @@ export default function Navbar() {
                     alt="Your Company"
                   />
                 </div>
-                <div className="">
-  <div className="flex space-x-8"> {/* Add flex and space-x-4 for spacing */}
-    <Button>
-      <Link to="/" className="h-6 w-6 text-black font-serif font-bold space-x-4">
-        Home
-      </Link>
-    </Button>
-    <Button>
-      <Link to="/product" className="h-6 w-6 text-black font-serif font-bold">
-        Product
-      </Link>
-    </Button>
-    <Button>
-      <Link to="/user/seller" className="h-6 w-6 text-black font-serif font-bold">
-        Seller
-      </Link>
-    </Button>
-  </div>
-</div>
-
+                <div className="hidden sm:flex sm:space-x-4">
+                  <Link to="/" className="text-black font-serif font-bold text-sm sm:text-base px-2 py-1 sm:px-4 sm:py-2">
+                    Home
+                  </Link>
+                  <Link to="/product" className="text-black font-serif font-bold text-sm sm:text-base px-2 py-1 sm:px-4 sm:py-2">
+                    Products
+                  </Link>
+                  <Link to="/user/seller" className="text-black font-serif font-bold text-sm sm:text-base px-2 py-1 sm:px-4 sm:py-2">
+                    Seller
+                  </Link>
+                </div>
               </div>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                <button
-                  type="button"
-                  className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                <Button
+                  onClick={handleUserIdClick}
+                  className="relative flex items-center text-white text-sm sm:text-base px-2 py-1 sm:px-4 sm:py-2"
                 >
-                  <span className="sr-only">View notifications</span>
-              
-                  <Button
-                      onClick={userId}
-                      className="ml-4 text-white"
-                    >
-<ShoppingCartIcon className="h-6 w-6 text-white" /> <p>{cart}</p>
-                    </Button>
-                </button>
+                  <ShoppingCartIcon className="h-6 w-6 text-black" />
+                  {cart > 0 && (
+                    <span className="absolute -top-1 -right-1 text-xs font-bold text-white bg-red-500 rounded-full px-2 py-1">
+                      {cart}
+                    </span>
+                  )}
+                </Button>
 
-                {/* Profile dropdown */}
                 <Menu as="div" className="relative ml-3">
                   <div>
                     <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                       <span className="sr-only">Open user menu</span>
-                      <img
-                        className="h-8 w-8 rounded-full"
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                        alt=""
-                      />
+                     <AccountCircleOutlinedIcon className='h-8 w-8 rounded-full color-white'/>
                     </Menu.Button>
                   </div>
                   <Transition
@@ -210,16 +172,6 @@ export default function Navbar() {
                               </Link>
                             )}
                           </Menu.Item>
-                          {/* <Menu.Item>
-                            {({ active }) => (
-                              <Link
-                                to="/user/seller"
-                                className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
-                              >
-                                Seller
-                              </Link>
-                            )}
-                          </Menu.Item> */}
                         </>
                       ) : (
                         <Menu.Item>
@@ -234,18 +186,12 @@ export default function Navbar() {
                           )}
                         </Menu.Item>
                       )}
-
-
-
-
-                      
                     </Menu.Items>
                   </Transition>
                 </Menu>
               </div>
             </div>
           </div>
-
           <Disclosure.Panel className="sm:hidden">
             <div className="space-y-1 px-2 pb-3 pt-2">
               {navigation.map((item) => (

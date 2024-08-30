@@ -4,6 +4,7 @@ import Rating from "../models/ratings.model.js";
 export const setRatingForAProduct = async (req, res) => {
   try {
     const { productId, userId, value } = req.body; // Correctly access req.body
+console.log(value);
 
     let findProduct = await Rating.findOne({ product: productId });
 
@@ -41,31 +42,40 @@ export const setRatingForAProduct = async (req, res) => {
 };
 
 
-
 export const setTheRatingInTheProduct = async (req, res) => {
   try {
-    const { productId } = req.body;
+    const { productId } = req.body; // productId is an array
+    console.log(productId);
+    
+    let updatedProducts = [];
 
-    const findTheProduct = await Rating.findOne({ product: productId });
+    for (let i = 0; i < productId.length; i++) {
+      const ratingData = await Rating.findOne({ product: productId[i] });
 
-    if (!findTheProduct) {
-      return res.status(400).json({ message: "Product not found" });
+      if (!ratingData) {
+        console.log(`Rating data not found for product ID ${productId[i]}`);
+        continue;
+      }
+
+      const sum = ratingData.value.reduce((acc, curr) => acc + curr, 0);
+      const avg = sum / ratingData.user.length;
+
+      const product = await Product.findById(productId[i]);
+
+      if (!product) {
+        return res.status(400).json({ message: `Product with ID ${productId[i]} not found in products` });
+      }
+
+      product.rating = avg;
+      await product.save();
+
+      updatedProducts.push(product);
     }
-    const sum = findTheProduct.value.reduce((acc, curr) => acc + curr, 0);
 
-    const avg = sum / findTheProduct.user.length;
-
-
-    const findProduct = await Product.findById(productId);
-
-   
-    findProduct.rating = avg;
-
-    await findProduct.save();
-
-    return res.status(200).json({ message: "Average rating updated", data: findProduct });
+    return res.status(200).json({ message: "Average ratings updated", data: updatedProducts });
   } catch (error) {
     console.error("Error setting the rating:", error);
     return res.status(500).json({ message: "Something went wrong" });
   }
 };
+

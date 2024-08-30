@@ -3,17 +3,21 @@ import User from "../models/user.model.js";
 
 export const createAddress = async (req, res) => {
     try {
-        const { username, state, city, zipcode, location,contactNumber } = req.body;
+        const { username, state, city, zipcode, location, contactNumber, userId } = req.body;
 
+        console.log(username, state, city, zipcode, location, contactNumber, userId);
         // Check if any required field is missing
-        if (!username || !state || !city || !zipcode || !location) {
+        if (!username || !state || !city || !zipcode || !location || !contactNumber ) {
             return res.status(400).json({ message: "All fields are required" });
         }
+        if ( !userId) {
+            return res.status(400).json({message:"Login Please"})
+        }
 
-        // Find the user by username
-        const findUser = await User.findOne({ username });
+        // Find the user by userId
+        const findUser = await User.findById(userId);
         if (!findUser) {
-            return res.status(404).json("User not found");
+            return res.status(404).json({ message: "User not found" });
         }
 
         // Create the address
@@ -35,8 +39,6 @@ export const createAddress = async (req, res) => {
         return res.status(201).json({ message: "User address created successfully", address });
     } catch (error) {
         console.error("Error creating address:", error); // Log the error for debugging
-        throw new Error(error.message)
+        return res.status(500).json({ message: "Internal server error" });
     }
 };
-
-

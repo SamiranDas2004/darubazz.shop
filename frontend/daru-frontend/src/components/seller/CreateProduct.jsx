@@ -16,7 +16,15 @@ const CreateProduct = () => {
   const navigate = useNavigate();
 
   const findProduct = () => {
+    const token = localStorage.getItem('token');
 
+    if (!token) {
+      console.log("not logged in");
+      return;
+    }
+
+    const decodedToken = jwtDecode(token);
+    const username = decodedToken.username;
 
 
 

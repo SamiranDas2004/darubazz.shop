@@ -16,19 +16,19 @@ function Address() {
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent default form submission
-
+    const token=localStorage.getItem('token')
+    const decodeJwt=jwtDecode(token)
+    const userId=decodeJwt.userId
     try {
       // Submit address information
       const addressResponse = await axios.post(
         "http://localhost:8000/api/address/orderaddress",
-        address
+      { ...address, userId:userId}
       );
       console.log(addressResponse.data);
 
       // Handle total payment
-      const token=localStorage.getItem('token')
-      const decodeJwt=jwtDecode(token)
-      const userId=decodeJwt.userId
+    
 
       const paymentResponse = await axios.post(
         `http://localhost:8000/api/order/payment/${totalPrice}`,{userId}

@@ -4,9 +4,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import {jwtDecode} from 'jwt-decode';
-import {useDispatch} from 'react-redux'
+import { useDispatch } from 'react-redux';
 import { addProducts } from '../features/products/product.Slice';
-
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 const Cart = () => {
   const { userId } = useParams();
@@ -16,28 +17,24 @@ const Cart = () => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [image, setImage] = useState('');
   const navigate = useNavigate();
-
-  const dispatch=useDispatch()
-
-
+  const dispatch = useDispatch();
 
   // Function to fetch cart items from backend
   const fetchCartItems = async () => {
     try {
       const response = await axios.get(`http://localhost:8000/api/user/cartitems/${userId}`);
       if (response.status === 200) {
-        console.log(response.data);
-        setCartItems(response.data);
-        const cartItems = response.data;
-        const productIds = cartItems
-        .map(item => item.products.map(product => product._id))
-        .flat();
-      
-      // Dispatch the product IDs
-      dispatch(addProducts(productIds));
-      
-      console.log(productIds);
-        calculateTotalPrice(response.data); // Calculate total price when cart items are fetched
+        const cartItems = response.data.map(item => ({
+          ...item,
+          products: item.products.map(product => ({
+            ...product,
+            count: 1 // Initialize count for each product
+          }))
+        }));
+        setCartItems(cartItems);
+        const productIds = cartItems.map(item => item.products.map(product => product._id)).flat();
+        dispatch(addProducts(productIds));
+        calculateTotalPrice(cartItems); // Calculate total price when cart items are fetched
       } else {
         setMessage("Can't get the cart items");
       }
@@ -46,16 +43,12 @@ const Cart = () => {
     }
   };
 
-//reduc-toolkit
- 
-
   // Function to calculate total price
   const calculateTotalPrice = (cartItems) => {
-
     let totalPrice = 0;
     cartItems.forEach(cartItem => {
       cartItem.products.forEach(product => {
-        totalPrice += product.price;
+        totalPrice += product.price * product.count;
       });
     });
     setTotalPrice(totalPrice);
@@ -94,7 +87,6 @@ const Cart = () => {
     const userId = decodedToken.userId;
     const username = decodedToken.username;
     const email = decodedToken.email;
-    console.log(username,email);
     if (!userId) {
       console.log('User ID not found');
       return;
@@ -103,7 +95,7 @@ const Cart = () => {
     try {
       const orderPromises = cartItems.flatMap(cartItem =>
         cartItem.products.map(async product => {
-          const response = await axios.post(`http://localhost:8000/api/order/placeorder/${product._id}`, { userId ,username,email});
+          const response = await axios.post(`http://localhost:8000/api/order/placeorder/${product._id}`, { userId, username, email });
           console.log(response.data);
           return response;
         })
@@ -123,15 +115,50 @@ const Cart = () => {
     }
   };
 
+  // Function to handle image change
+  const imageChange = (imageUrl) => {
+    try {
+      console.log(imageUrl);
+      
+      setImage(imageUrl);
+    } catch (error) {
+      console.log(error);
+      
+    }
+  };
+
+  // Increment count of a specific product
+  const incrementCount = (productId) => {
+    const updatedCartItems = cartItems.map(cartItem => ({
+      ...cartItem,
+      products: cartItem.products.map(product =>
+        product._id === productId
+          ? { ...product, count: product.count + 1 }
+          : product
+      )
+    }));
+    setCartItems(updatedCartItems);
+    calculateTotalPrice(updatedCartItems);
+  };
+
+  // Decrement count of a specific product
+  const decrementCount = (productId) => {
+    const updatedCartItems = cartItems.map(cartItem => ({
+      ...cartItem,
+      products: cartItem.products.map(product =>
+        product._id === productId && product.count > 1
+          ? { ...product, count: product.count - 1 }
+          : product
+      )
+    }));
+    setCartItems(updatedCartItems);
+    calculateTotalPrice(updatedCartItems);
+  };
+
   // Fetch cart items on component mount
   useEffect(() => {
     fetchCartItems();
   }, []);
-
-  // Function to handle image change
-  const imageChange = (imageUrl) => {
-    setImage(imageUrl);
-  };
 
   return (
     <Transition show={open}>
@@ -187,7 +214,7 @@ const Cart = () => {
                                       <img
                                         src={product.imageUrl}
                                         alt={product.productname}
-                                     className="h-24 w-24 object-cover object-center cursor-pointer shadow-md"
+                                        className="h-24 w-24 object-cover object-center cursor-pointer shadow-md"
                                         onClick={() => imageChange(product.imageUrl)}
                                       />
                                     </div>
@@ -202,9 +229,14 @@ const Cart = () => {
                                       </div>
                                       <div className="flex-1 flex items-end justify-between text-sm">
                                         <p className="text-gray-500">{product.category}</p>
+                                        <div className="flex items-center">
+                                          <AddCircleIcon onClick={() => incrementCount(product._id)} />
+                                          <span className="mx-2">{product.count}</span>
+                                          <RemoveCircleIcon onClick={() => decrementCount(product._id)} />
+                                        </div>
                                         <button
                                           onClick={() => removeFromCart(product._id)}
-                                          className="font-medium text-indigo-600 hover:text-indigo-500"
+                                          className="font-medium text-red-600 hover:text-red-500"
                                         >
                                           Remove
                                         </button>
@@ -221,8 +253,8 @@ const Cart = () => {
 
                     <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
                       <div className="flex justify-between text-base font-medium text-gray-900">
-                        <p>Subtotal</p>
-                        <p>{totalPrice}</p>
+                        <p>Total Price</p>
+                        <p>Rs {totalPrice}</p>
                       </div>
                       <p className="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
                       <div className="mt-6">
@@ -230,7 +262,7 @@ const Cart = () => {
                           onClick={handlePlaceOrder}
                           className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
                         >
-                          Continue
+                          Place Order
                         </button>
                       </div>
                       <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
@@ -241,36 +273,22 @@ const Cart = () => {
                             className="font-medium text-indigo-600 hover:text-indigo-500"
                             onClick={() => setOpen(false)}
                           >
-                            Continue Shopping
-                            <span aria-hidden="true"> &rarr;</span>
+                            Continue Shopping<span aria-hidden="true"> &rarr;</span>
                           </button>
                         </p>
                       </div>
-                      {message && <div className="mt-4 text-center text-red-500">{message}</div>}
                     </div>
                   </div>
                 </Dialog.Panel>
               </Transition.Child>
             </div>
           </div>
+          <div className="flex justify-center items-center h-screen">
+  <img className="max-w-full max-h-full" src={image} alt="Product Image" />
+</div>
+
         </div>
       </Dialog>
-
-      {image && (
-        <div className="fixed inset-0 flex items-center justify-center">
-          <div className="max-w-lg w-full bg-white rounded-lg shadow-lg p-4 overflow-hidden">
-            <img src={image} alt="Selected product" className="object-cover object-center w-full h-auto" />
-            <div className="absolute top-2 right-2">
-              <button
-                className="text-red-500 hover:text-red-600"
-                onClick={() => setImage('')}
-              >
-                <XMarkIcon className="h-6 w-6" />
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </Transition>
   );
 };

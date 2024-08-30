@@ -5,7 +5,7 @@ import AllProducts from '../allProducts/AllProducts'
 import Order from '../order/Order'
 import Address from '../Address/Address'
 import Registration from '../auth/Registration'
-import Verify from '../auth/Verify'
+
 import Login from '../auth/Login'
 import CreateProduct from '../seller/CreateProduct'
 import OneProduct from '../seller/OneProduct'
@@ -25,7 +25,7 @@ function CustomRoutes() {
             <Route path='/order/:id' element={<Order/>} />
             <Route path='/order/address/:totalPrice' element={<Address/>}/>
             <Route path='/user/signup' element={<Registration/>}/>
-            <Route path='/user/verification/:username'  element={<Verify/>}/>
+         
             <Route path='/user/login' element={<Login/>}/>
             <Route path='/user/seller' element={<CreateProduct/>}/>
             <Route path='/seller/products/:username' element={<OneProduct/>}/>
