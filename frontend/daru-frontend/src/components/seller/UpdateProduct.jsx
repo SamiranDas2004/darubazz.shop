@@ -32,10 +32,20 @@ function UpdateProduct() {
     if (brand) formData.append('brand', brand);
     if (imageUrl) formData.append('imageUrl', imageUrl);
 
+    // Debugging: Log formData entries
+    for (let pair of formData.entries()) {
+      console.log(`${pair[0]}: ${pair[1]}`);
+    }
+
     try {
       const response = await axios.put(
         `http://localhost:8000/api/product/update/${id}`,
-        formData
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data' // Important to set this header
+          }
+        }
       );
 
       if (response.status === 200) {
@@ -45,7 +55,7 @@ function UpdateProduct() {
         setCategory('');
         setBrand('');
         setImageUrl(null);
-        fileInputRef.current.value = '';
+        fileInputRef.current.value = ''; // Clear the file input
       } else {
         setMessage('Failed to update product');
       }
@@ -64,6 +74,7 @@ function UpdateProduct() {
         <div>
           <label className="block text-sm font-medium text-gray-700">Product Name</label>
           <input
+            name='productname'
             type="text"
             value={productname}
             onChange={(e) => setProductname(e.target.value)}
@@ -101,7 +112,11 @@ function UpdateProduct() {
           <label className="block text-sm font-medium text-gray-700">Image</label>
           <input
             type="file"
-            onChange={(e) => setImageUrl(e.target.files[0])}
+            onChange={(e) => {
+              const file = e.target.files[0];
+              setImageUrl(file);
+              console.log('Selected file:', file); // Debugging
+            }}
             ref={fileInputRef}
             className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
           />

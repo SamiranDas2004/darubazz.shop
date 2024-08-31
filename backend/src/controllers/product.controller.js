@@ -112,6 +112,7 @@ export const updateProduct = async (req, res) => {
     return res.status(402).json("Product ID is not found");
   }
   const { productname, price, category, brand, imageUrl } = req.body;
+console.log(productname,productId);
 
   try {
     // Find the product by ID
@@ -138,6 +139,8 @@ export const updateProduct = async (req, res) => {
 
     return res.status(200).json({ message: "Product updated successfully", updatedProduct });
   } catch (error) {
+    console.log(error);
+    
     return res.status(500).json({ message: "An error occurred", error });
   }
 };
