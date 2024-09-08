@@ -67,7 +67,7 @@ export const cancelOrder = async (req, res) => {
 
 
 export const confirmOrder = async (req, res) => {
-  console.log("in confirm");
+  // console.log("in confirm");
   const { orderId } = req.params;
   const { username, email } = req.body;
 
@@ -147,7 +147,7 @@ export const userConfirmOrders = async (req, res) => {
   const { userId, productIds } = req.body;
 
   // Log the incoming request
-  console.log('Incoming request:', req.body);
+  // console.log('Incoming request:', req.body);
 
   // Check if user exists
   const findUser = await User.findById(userId);
@@ -240,7 +240,7 @@ console.log(Id);
     for (let i = 0; i < findUser.products.length; i++) {
       // Corrected reference to the product
       if (Id == findUser.products[i]) {
-        console.log(findUser.products[i]);
+        // console.log(findUser.products[i]);
         return res.status(200).send(true);
       }
     }
@@ -277,7 +277,7 @@ export const cancelUserOrder = async (req, res) => {
 
     // Update the order with the remaining products
     findUserOrder.products = updatedProducts;
-    console.log(findUserOrder);
+    // console.log(findUserOrder);
     await findUserOrder.save();
 
     return res.status(200).json({ message: "Product removed from the order successfully", updatedOrder: findUserOrder });
@@ -302,7 +302,7 @@ export const cancelUserOrder = async (req, res) => {
 export const showFinalProductsToUser = async (req, res) => {
   try {
     const { productsIds } = req.body;
-    console.log(productsIds);
+    // console.log(productsIds);
 
     
     let products = [];
@@ -314,7 +314,7 @@ export const showFinalProductsToUser = async (req, res) => {
    
     }
     
-    console.log(products);
+    // console.log(products);
     if (products.length === 0) {
       return res.status(200).send("No orders");
     }

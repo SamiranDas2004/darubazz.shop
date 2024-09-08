@@ -1,55 +1,46 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
 
 function Overview() {
-
-    const navigate=useNavigate()
-const handelNavigate=()=>{
-navigate('/product')    }
-
-
-
   return (
-<div className="flex flex-col items-center">
-  <h1 className='font-bold font-serif text-5xl'>How it works</h1>
-  <div className="flex justify-center space-x-4">
-    <div className="flex flex-col items-center p-4">
-      <img 
-        className="block mb-4" 
-        src="https://content.gotoliquorstore.com/images/how-it-works/ic_step1.png" 
-        alt="Step 1"
-      />
-      <h1 className="font-serif font-bold text-3xl">Enter Address</h1>
+    <div className="flex flex-col bottom-0 border-t-2">
+      <div className="flex-grow">
+        {/* Your main content can go here */}
+      </div>
+      <footer className="bg-white rounded-lg shadow mt-auto bottom-0 m-4 mb-0 dark:bg-gray-800">
+        <div className="w-full p-6 md:flex md:items-center md:justify-between">
+          <span className="text-lg text-gray-500 sm:text-center dark:text-gray-400">
+            © 2024
+            <a
+              href="https://flowbite.com/"
+              className="hover:underline font-semibold"
+            >
+              Darubazz™
+            </a>
+            . All Rights Reserved.
+          </span>
+          <ul className="flex flex-wrap items-center justify-center mt-6 md:mt-0 text-md font-medium text-gray-500 dark:text-gray-400">
+            <li className="mr-6">
+              <a href="/about" className="hover:underline">
+                About
+              </a>
+            </li>
+            <li className="mr-6">
+              <a href="/privacy-policy" className="hover:underline">
+                Privacy Policy
+              </a>
+            </li>
+            <li className="mr-6">
+              <a href="/developer" className="hover:underline">
+                Developers
+              </a>
+            </li>
+            
+            
+          </ul>
+        </div>
+      </footer>
     </div>
-    <div className="flex flex-col items-center p-4">
-      <img 
-        className="block mb-4" 
-        src="https://content.gotoliquorstore.com/images/how-it-works/ic_step2.png" 
-        alt="Step 2"
-      />
-      <h1 className="font-serif font-bold text-3xl">Choose Product</h1>
-    </div>
-    <div className="flex flex-col items-center p-4">
-      <img 
-        className="block mb-4" 
-        src="https://content.gotoliquorstore.com/images/how-it-works/ic_step3.png" 
-        alt="Step 3"
-      />
-      <h1 className="font-serif font-bold text-3xl">Wait For Delivery</h1>
-    </div>
-  </div>
-  <div className="mt-12">
-    <button
-      onClick={handelNavigate}
-      className="bg-purple-700 hover:bg-purple-800 text-white font-bold py-2 px-4 rounded text-2xl"
-      style={{ backgroundColor: '#85004b' }}
-    >
-      Click here to shop
-    </button>
-  </div>
-</div>
-
-  )
+  );
 }
 
-export default Overview
+export default Overview;

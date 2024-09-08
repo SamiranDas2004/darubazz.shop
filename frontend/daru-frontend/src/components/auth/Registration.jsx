@@ -18,7 +18,7 @@ function Registration() {
             if (response.data && response.status === 200) {
                 toast.success("Signup Successful");
                 setTimeout(() => {
-                    navigate(`/user/login`);
+                    navigate('/');
                 }, 2500);
             } else {
                 toast.error("Registration failed. Please try again later.");

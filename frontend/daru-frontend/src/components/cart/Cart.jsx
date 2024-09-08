@@ -284,7 +284,7 @@ const Cart = () => {
             </div>
           </div>
           <div className="flex justify-center items-center h-screen">
-  <img className="max-w-full max-h-full" src={image} alt="Product Image" />
+  <img className="max-w-full max-h-full" src={image} alt="Click on thr product to see the image" />
 </div>
 
         </div>

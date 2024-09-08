@@ -15,6 +15,8 @@ import PlaceOrder from '../order/PlaceOrder'
 import YourOrders from '../seller/YourOrders'
 import DifferntCatagory from '../Category/DifferntCatagory'
 import UserOrder from '../order/UserOrder'
+import About from '../Overview/About'
+import Developer from '../Overview/Developers'
 function CustomRoutes() {
   return (
     <div>
@@ -25,7 +27,7 @@ function CustomRoutes() {
             <Route path='/order/:id' element={<Order/>} />
             <Route path='/order/address/:totalPrice' element={<Address/>}/>
             <Route path='/user/signup' element={<Registration/>}/>
-         
+         <Route path='/about' element={<About/>}/>
             <Route path='/user/login' element={<Login/>}/>
             <Route path='/user/seller' element={<CreateProduct/>}/>
             <Route path='/seller/products/:username' element={<OneProduct/>}/>
@@ -40,6 +42,7 @@ function CustomRoutes() {
             <Route path='/:category' element={<DifferntCatagory/>} />
             <Route path='/:category' element={<DifferntCatagory/>} />
             <Route path='/customerorders' element={<UserOrder/>} />
+            <Route path='developer' element={<Developer/>}/>
         </Routes>
     </div>
   )

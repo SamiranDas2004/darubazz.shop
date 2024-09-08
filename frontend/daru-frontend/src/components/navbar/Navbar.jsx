@@ -7,7 +7,7 @@ import { jwtDecode } from 'jwt-decode';
 import { Button } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import PersonIcon from '@mui/icons-material/Person';
 import CloseIcon from '@mui/icons-material/Close';
 const navigation = [
   { name: 'Home', href: '/', current: true },
@@ -74,18 +74,20 @@ export default function Navbar() {
       });
   }, []);
 
-  const handleLogout = () => {
-    axios.get('/api/user/logout', { withCredentials: true })
-      .then(response => {
-        if (response.status === 200) {
-          localStorage.removeItem('token');
-          setIsLoggedIn(false);
-        }
-      })
-      .catch(error => {
-        console.error('Logout failed', error);
-      });
+  const handleLogout = async () => {
+    try {
+      const response = await axios.get('/api/user/logout', { withCredentials: true });
+      if (response.status === 200) {
+        localStorage.removeItem('token');
+        setIsLoggedIn(false);
+        navigate('/user/login'); // Redirect to login or home page
+      }
+    } catch (error) {
+      console.error('Logout failed', error);
+      // Optionally, show an error message to the user
+    }
   };
+  
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -111,6 +113,9 @@ export default function Navbar() {
       </Link>
       <Link to="/user/seller" className="text-black font-serif font-bold text-sm sm:text-base px-2 py-1 sm:px-4 sm:py-2">
         Seller
+      </Link>
+      <Link to="/customerorders" className="text-black font-serif font-bold text-sm sm:text-base px-2 py-1 sm:px-4 sm:py-2">
+        Orders
       </Link>
       
     </div>
@@ -139,6 +144,9 @@ export default function Navbar() {
                   <Link to="/user/seller" className="text-black font-serif font-bold text-sm sm:text-base px-2 py-1 sm:px-4 sm:py-2">
                     Seller
                   </Link>
+                  <Link to="/customerorders" className="text-black font-serif font-bold text-sm sm:text-base px-2 py-1 sm:px-4 sm:py-2">
+        Orders
+      </Link>
                 </div>
               </div>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
@@ -158,7 +166,7 @@ export default function Navbar() {
                   <div>
                     <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                       <span className="sr-only">Open user menu</span>
-                      <AccountCircleOutlinedIcon className='h-8 w-8 rounded-full color-white' />
+                      <PersonIcon className='h-8 w-8 rounded-full text-white bg-black' />
                     </Menu.Button>
                   </div>
                   <Transition
@@ -198,7 +206,7 @@ export default function Navbar() {
                         <Menu.Item>
                           {({ active }) => (
                             <a
-                              href="#"
+                             
                               onClick={handleLogout}
                               className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                             >
@@ -210,8 +218,6 @@ export default function Navbar() {
                     </Menu.Items>
                   </Transition>
                 </Menu>
- 
-
               </div>
             </div>
           </div>

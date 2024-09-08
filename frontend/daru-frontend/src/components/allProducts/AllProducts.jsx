@@ -79,7 +79,7 @@ function AllProducts() {
         </form>
       </div>
       <div className="grid grid-cols-6">
-        <div className="col-span-1 p-4 border-r">
+        <div className="grid grid-cols-1 ">
           <div className="flex flex-col space-y-2">
             <label className="flex items-center">
               <input

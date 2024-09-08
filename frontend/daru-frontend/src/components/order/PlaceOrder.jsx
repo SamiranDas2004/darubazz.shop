@@ -44,7 +44,7 @@ function PlaceOrder() {
       const { data } = await axios.post('http://localhost:8000/api/payment/payment', orderData);
 
       const options = {
-        key: 'rzp_test_0JAM9k2xU1i9q3', // Use your Razorpay key here
+        key: 'rzp_test_zTZhnpE3McXFk5', // Use your Razorpay key here
         amount: data.amount,
         currency: data.currency,
         name: 'Darubazz',
