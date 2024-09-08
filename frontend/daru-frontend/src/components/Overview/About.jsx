@@ -17,6 +17,7 @@ function About() {
       <p className="text-lg md:text-xl text-center mt-4">
         Oh, and by the way, this is a fun product by  <Link className=' font-bold font-2xl ' to='https://x.com/SamiranDas2004'>Samiran Das</Link> . Don’t take it so seriously! Enjoy responsibly!
       </p>
+      
     </div>
   );
 }

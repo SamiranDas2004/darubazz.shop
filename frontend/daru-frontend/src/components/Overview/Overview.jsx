@@ -24,11 +24,7 @@ function Overview() {
                 About
               </a>
             </li>
-            <li className="mr-6">
-              <a href="/privacy-policy" className="hover:underline">
-                Privacy Policy
-              </a>
-            </li>
+          
             <li className="mr-6">
               <a href="/developer" className="hover:underline">
                 Developers
