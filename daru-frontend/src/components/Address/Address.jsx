@@ -22,7 +22,7 @@ function Address() {
     try {
       // Submit address information
       const addressResponse = await axios.post(
-        "http://localhost:8000/api/address/orderaddress",
+        "https://darubazz-in.onrender.com/api/address/orderaddress",
       { ...address, userId:userId}
       );
       console.log(addressResponse.data);
@@ -31,7 +31,7 @@ function Address() {
     
 
       const paymentResponse = await axios.post(
-        `http://localhost:8000/api/order/payment/${totalPrice}`,{userId}
+        `https://darubazz-in.onrender.com/api/order/payment/${totalPrice}`,{userId}
       );
 
       if (!paymentResponse) {

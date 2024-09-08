@@ -9,7 +9,7 @@ function YourOrders() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.post(`http://localhost:8000/api/order/orders/${userId}`);
+        const response = await axios.post(`https://darubazz-in.onrender.com/api/order/orders/${userId}`);
         if (!response.data) {
           console.log("Error in POST method");
         }
@@ -25,7 +25,7 @@ function YourOrders() {
 
   const cancelOrder = async (orderId, username, email) => {
     try {
-      const response = await axios.delete(`http://localhost:8000/api/order/cancelorder/${orderId}`, {
+      const response = await axios.delete(`https://darubazz-in.onrender.com/api/order/cancelorder/${orderId}`, {
         data: { username, email }
       });
       if (response.status === 200) {
@@ -42,7 +42,7 @@ function YourOrders() {
 
   const confirmOrder = async (orderId, username, email) => {
     try {
-      const response = await axios.post(`http://localhost:8000/api/order/confirmorder/${orderId}`, {
+      const response = await axios.post(`https://darubazz-in.onrender.com/api/order/confirmorder/${orderId}`, {
         username,
         email
       });

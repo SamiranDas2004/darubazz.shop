@@ -9,7 +9,7 @@ const ProductList = () => {
   useEffect(() => {
     const handleCategory = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/product/category/${category}`);
+        const response = await axios.get(`https://darubazz-in.onrender.com/api/product/category/${category}`);
         console.log(response.status);
         setProducts(response.data.products);
       } catch (error) {

@@ -17,7 +17,7 @@ function AllProducts() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/product/allproducts");
+        const response = await axios.get("https://darubazz-in.onrender.com/api/product/allproducts");
         setProducts(response.data);
       } catch (error) {
         console.error("Error fetching products:", error);

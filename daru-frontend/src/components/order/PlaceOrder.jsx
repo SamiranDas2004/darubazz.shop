@@ -41,7 +41,7 @@ function PlaceOrder() {
         payment_capture: 1 // Auto capture
       };
 
-      const { data } = await axios.post('http://localhost:8000/api/payment/payment', orderData);
+      const { data } = await axios.post('https://darubazz-in.onrender.com/api/payment/payment', orderData);
 
       const options = {
         key: 'rzp_test_zTZhnpE3McXFk5', // Use your Razorpay key here
@@ -64,7 +64,7 @@ const productIds = lastArray.map(id => id);
 console.log("Product IDs:", productIds);
 
 
-        await axios.post("http://localhost:8000/api/order/userorder", { userId, productIds });
+        await axios.post("https://darubazz-in.onrender.com/api/order/userorder", { userId, productIds });
           navigate("/customerorders");
         },
         prefill: {

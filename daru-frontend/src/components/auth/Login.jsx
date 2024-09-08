@@ -14,7 +14,7 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post("http://localhost:8000/api/user/login", user);
+            const response = await axios.post("https://darubazz-in.onrender.com/api/user/login", user);
             if (response.status === 200) {
                 const token = response.data.token;
                 localStorage.setItem('token', token);

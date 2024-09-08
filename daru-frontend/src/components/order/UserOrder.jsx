@@ -23,12 +23,12 @@ function UserOrder() {
   useEffect(() => {
     const showUserAllOrders = async () => {
       try {
-        const userCartResponse = await axios.get(`http://localhost:8000/api/order/showuserorders/${userId}`);
+        const userCartResponse = await axios.get(`https://darubazz-in.onrender.com/api/order/showuserorders/${userId}`);
         console.log(userCartResponse.data);
 
         const productsArray = userCartResponse.data.findResult.products;
 
-        const showAllOrdersResponse = await axios.post("http://localhost:8000/api/order/showallorders", { productsIds: productsArray });
+        const showAllOrdersResponse = await axios.post("https://darubazz-in.onrender.com/api/order/showallorders", { productsIds: productsArray });
         console.log(showAllOrdersResponse.data);
         setProducts(showAllOrdersResponse.data.products);
       } catch (error) {
@@ -44,7 +44,7 @@ function UserOrder() {
   const cancelOrder = async (productId) => {
     try {
       console.log(productId);
-      const response = await axios.post(`http://localhost:8000/api/order/cancelUserOrder`, { userId, productId });
+      const response = await axios.post(`https://darubazz-in.onrender.com/api/order/cancelUserOrder`, { userId, productId });
       console.log(response.data);
       
       // Update the products state to remove the canceled product

@@ -14,7 +14,7 @@ function Registration() {
     const register = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post("http://localhost:8000/api/user/signup", user);
+            const response = await axios.post("https://darubazz-in.onrender.com/api/user/signup", user);
             if (response.data && response.status === 200) {
                 toast.success("Signup Successful");
                 setTimeout(() => {

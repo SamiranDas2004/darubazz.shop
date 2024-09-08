@@ -17,7 +17,7 @@ console.log(ratingValue);
     const fetchOrder = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/product/findbyid/${id}`
+          `https://darubazz-in.onrender.com/api/product/findbyid/${id}`
         );
         setOrder(response.data);
       } catch (error) {
@@ -44,7 +44,7 @@ console.log(ratingValue);
       const productId = order._id;
 
       const response = await axios.post(
-        "http://localhost:8000/api/user/cart",
+        "https://darubazz-in.onrender.com/api/user/cart",
         {
           productId,
           userId,
@@ -83,13 +83,13 @@ console.log(ratingValue);
   
       const userId = decodedToken.userId;
       const response = await axios.post(
-        "http://localhost:8000/api/order/ratingallowornot",
+        "https://darubazz-in.onrender.com/api/order/ratingallowornot",
         { userId, Id: id }
       );
   
       if (response.data) {
         const sendRating = await axios.post(
-          "http://localhost:8000/api/order/giverating",
+          "https://darubazz-in.onrender.com/sapi/order/giverating",
           { userId, productId: id, value: value }
         );
         console.log(sendRating.data);

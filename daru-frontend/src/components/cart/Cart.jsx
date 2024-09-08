@@ -22,7 +22,7 @@ const Cart = () => {
   // Function to fetch cart items from backend
   const fetchCartItems = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/api/user/cartitems/${userId}`);
+      const response = await axios.get(`https://darubazz-in.onrender.com/api/user/cartitems/${userId}`);
       if (response.status === 200) {
         const cartItems = response.data.map(item => ({
           ...item,
@@ -57,7 +57,7 @@ const Cart = () => {
   // Function to remove a product from cart
   const removeFromCart = async (productId) => {
     try {
-      const response = await axios.post(`http://localhost:8000/api/user/deletecart/${productId}`, { userId });
+      const response = await axios.post(`https://darubazz-in.onrender.com/api/user/deletecart/${productId}`, { userId });
       if (response.status === 200) {
         setMessage('Product removed from cart');
         // Update cart items after removing product
@@ -95,7 +95,7 @@ const Cart = () => {
     try {
       const orderPromises = cartItems.flatMap(cartItem =>
         cartItem.products.map(async product => {
-          const response = await axios.post(`http://localhost:8000/api/order/placeorder/${product._id}`, { userId, username, email });
+          const response = await axios.post(`https://darubazz-in.onrender.com/api/order/placeorder/${product._id}`, { userId, username, email });
           console.log(response.data);
           return response;
         })

@@ -39,7 +39,7 @@ function UpdateProduct() {
 
     try {
       const response = await axios.put(
-        `http://localhost:8000/api/product/update/${id}`,
+        `https://darubazz-in.onrender.com/api/product/update/${id}`,
         formData,
         {
           headers: {

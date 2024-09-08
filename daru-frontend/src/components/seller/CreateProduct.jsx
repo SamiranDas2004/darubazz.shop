@@ -50,7 +50,7 @@ const CreateProduct = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:8000/api/product/createProduct', formData, {
+      const response = await axios.post('https://darubazz-in.onrender.com/api/product/createProduct', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

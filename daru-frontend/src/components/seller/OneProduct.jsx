@@ -11,7 +11,7 @@ function OneProduct() {
   useEffect(() => {
     const findProduct = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/product/yourproducts', {
+        const response = await axios.get('https://darubazz-in.onrender.com/api/product/yourproducts', {
           params: { username }
         });
 
@@ -29,7 +29,7 @@ function OneProduct() {
 
   const handleDelete = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:8000/api/product/delete/${id}`);
+      const response = await axios.delete(`https://darubazz-in.onrender.com/api/product/delete/${id}`);
       console.log(response.data);
       setProducts(products.filter(product => product._id !== id)); // Remove deleted product from state
     } catch (error) {

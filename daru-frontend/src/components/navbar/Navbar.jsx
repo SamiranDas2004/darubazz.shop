@@ -38,7 +38,7 @@ export default function Navbar() {
         return;
       }
       try {
-        const response = await axios.post("http://localhost:8000/api/product/cartitems", { userId });
+        const response = await axios.post("https://darubazz-in.onrender.com/api/product/cartitems", { userId });
         setCart(response.data.totalItems || 0); // Default to 0 if totalItems is undefined
       } catch (error) {
         console.error('Error:', error.message);
