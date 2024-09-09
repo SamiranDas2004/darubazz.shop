@@ -1,45 +1,44 @@
-import express from 'express'
-import cors from "cors"
-import connectDB from '../db/dbconnect.js'
-import cookieParser from "cookie-parser"
+import express from 'express';
+import cors from "cors";
+import connectDB from '../db/dbconnect.js';
+import cookieParser from "cookie-parser";
 import dotenv from 'dotenv';
 
-
 dotenv.config();
-const app=express()
-const port=8000
+const app = express();
+const port = 8000;
 
-const corsOption={
-    origin:"https://darubazz.shop"
-}
+const corsOptions = {
+    origin: "https://darubazz.shop",
+    credentials: true, // Allow credentials like cookies, authorization headers
+    methods: ["GET", "POST", "PUT", "DELETE"], // Specify allowed methods
+    allowedHeaders: ["Content-Type", "Authorization"] // Allow specific headers
+};
 
-app.use(cors(corsOption))
-app.use(cookieParser( ))
-app.use(express.json({limit:"20kb"}))
+app.use(cors(corsOptions));
+app.use(cookieParser());
+app.use(express.json({ limit: "20kb" }));
 
-app.get("/",(req,res)=>{
-    res.send("darubazz")
-})
+app.get("/", (req, res) => {
+    res.send("darubazz");
+});
 
-
-
-import userRouter from './router/user.router.js'
-app.use('/api/user',userRouter)
+import userRouter from './router/user.router.js';
+app.use('/api/user', userRouter);
 
 import productRouter from './router/product.router.js';
-app.use('/api/product',productRouter)
+app.use('/api/product', productRouter);
 
 import orderRouter from './router/order.router.js';
-app.use('/api/order',orderRouter)
+app.use('/api/order', orderRouter);
 
 import addressRouter from './router/address.router.js';
-app.use('/api/address',addressRouter)
+app.use('/api/address', addressRouter);
 
 import paymentRouter from './router/paymentrouter.js';
 app.use('/api/payment', paymentRouter);
 
-
-app.listen(port,async()=>{
-   connectDB()
-    console.log("the server is listening on port ",port);
-})
+app.listen(port, async () => {
+    await connectDB();
+    console.log("The server is listening on port ", port);
+});
