@@ -12,7 +12,7 @@ const corsOptions = {
     origin: "https://darubazz.shop",
     credentials: true, // Allow credentials like cookies, authorization headers
     methods: ["GET", "POST", "PUT", "DELETE"], // Specify allowed methods
-    allowedHeaders: ["Content-Type", "Authorization"] // Allow specific headers
+    // allowedHeaders: ["Content-Type", "Authorization"] // Allow specific headers
 };
 
 app.use(cors(corsOptions));
