@@ -10,7 +10,7 @@ const app=express()
 const port=8000
 
 const corsOption={
-    origin:"*"
+    origin:"https://darubazz.shop"
 }
 
 app.use(cors(corsOption))
