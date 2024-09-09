@@ -1,41 +1,37 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
-import { Star, ShoppingCart, Loader } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import {jwtDecode} from "jwt-decode";
+import BasicRating from "../allProducts/Rate";
+import toast, { Toaster } from 'react-hot-toast';
 
-const Order = () => {
+function Order() {
   const [order, setOrder] = useState(null);
   const [message, setMessage] = useState("");
   const [ratingValue, setRatingValue] = useState(0);
-  const [isAllowedToRate, setIsAllowedToRate] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const { id } = useParams();
+  const [isAllowdornot, setIsAllowedOrnot] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchOrder = async () => {
       try {
-        const response = await axios.get(`https://darubazz-in.onrender.com/api/product/findbyid/${id}`);
+        const response = await axios.get(
+          `https://darubazz-in.onrender.com/api/product/findbyid/${id}`
+        );
         setOrder(response.data);
-        setIsLoading(false);
       } catch (error) {
         console.error("Error fetching order:", error);
-        setIsLoading(false);
       }
     };
-
     fetchOrder();
   }, [id]);
 
-  const handleCart = async () => {
+  const handelCart = async () => {
     const token = localStorage.getItem("token");
+
     if (!token) {
-      setMessage("User must be logged in");
+      console.log("User must be logged in");
       return;
     }
 
@@ -46,124 +42,116 @@ const Order = () => {
 
       const response = await axios.post(
         "https://darubazz-in.onrender.com/api/user/cart",
-        { productId, userId },
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          productId,
+          userId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
       if (response.status === 200) {
-        setMessage("Added to Cart");
+        toast.success("Added To Cart");
       } else {
-        setMessage("Cannot create the cart");
+        toast.error(response.data);
       }
     } catch (error) {
       setMessage(`Error: ${error.response?.data?.message || error.message}`);
     }
   };
 
-  const handleRating = async () => {
+  const IsAllowedRating = async (id, value) => {
     const token = localStorage.getItem("token");
+  
     if (!token) {
-      setMessage("User must be logged in");
+      console.log("User must be logged in");
       return;
     }
-
+  
     try {
       const decodedToken = jwtDecode(token);
       const userId = decodedToken.userId;
+
       const response = await axios.post(
         "https://darubazz-in.onrender.com/api/order/ratingallowornot",
         { userId, Id: id }
       );
-
+  
       if (response.data) {
         const sendRating = await axios.post(
           "https://darubazz-in.onrender.com/api/order/giverating",
-          { userId, productId: id, value: ratingValue }
+          { userId, productId: id, value: value }
         );
-        setIsAllowedToRate(true);
-        setMessage("Rating submitted successfully");
+        setIsAllowedOrnot(true);
       } else {
-        setIsAllowedToRate(false);
-        setMessage("You are not allowed to rate this product");
+        setIsAllowedOrnot(false);
       }
     } catch (error) {
-      console.error(error);
-      setMessage("Error submitting rating");
+      console.log(error);
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <Loader className="w-8 h-8 animate-spin" />
-      </div>
-    );
-  }
-
   if (!order) {
-    return <Alert variant="destructive">Failed to load product information</Alert>;
+    return <p className="text-center text-gray-600">Loading...</p>;
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">{order.productname}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="aspect-w-1 aspect-h-1">
-              <img
-                src={order.imageUrl}
-                alt={order.productname}
-                className="object-cover rounded-lg shadow-lg"
-              />
-            </div>
-            <div>
-              <p className="text-gray-600 mb-4">{order.description}</p>
-              <div className="flex flex-wrap gap-2 mb-4">
-                <Badge variant="secondary">Price: ${order.price}</Badge>
-                <Badge variant="outline">{order.category}</Badge>
-                <Badge variant="outline">{order.brand}</Badge>
-              </div>
-              <div className="mb-4">
-                <h3 className="text-lg font-semibold mb-2">Rate This Product</h3>
-                <div className="flex items-center gap-2">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Star
-                      key={star}
-                      className={`w-6 h-6 cursor-pointer ${
-                        star <= ratingValue ? "text-yellow-400 fill-current" : "text-gray-300"
-                      }`}
-                      onClick={() => setRatingValue(star)}
-                    />
-                  ))}
-                </div>
-                <Button onClick={handleRating} className="mt-2">
-                  Submit Rating
-                </Button>
-              </div>
-              {isAllowedToRate && (
-                <Alert>
-                  <AlertDescription>You rated this product {ratingValue} stars</AlertDescription>
-                </Alert>
-              )}
-            </div>
-          </div>
-        </CardContent>
-        <CardFooter className="flex justify-between items-center">
-          <Button onClick={handleCart} className="w-full">
-            <ShoppingCart className="mr-2 h-4 w-4" /> Add to Cart
-          </Button>
-        </CardFooter>
-      </Card>
+    <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+      <Toaster position="top-right" reverseOrder={false} />
+
       {message && (
-        <Alert className="mt-4" variant={message.includes("Error") ? "destructive" : "default"}>
-          <AlertDescription>{message}</AlertDescription>
-        </Alert>
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          {message}
+        </div>
       )}
+
+      <div className="bg-gray-100 p-6">
+        <div className="aspect-w-16 aspect-h-9">
+          <img
+            className="w-full h-full object-cover rounded-md"
+            src={order.imageUrl}
+            alt={order.productname}
+          />
+        </div>
+        <div className="mt-4">
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">{order.productname}</h2>
+          <p className="text-gray-600 mb-4">{order.description}</p>
+
+          <div className="mb-4">
+            <span className="bg-gray-200 text-green-500 text-sm font-semibold mr-2 px-2.5 py-0.5 rounded">
+              Price: ${order.price}
+            </span>
+            <span className="bg-gray-200 text-gray-700 text-sm font-semibold mr-2 px-2.5 py-0.5 rounded">
+              {order.category}
+            </span>
+            <span className="bg-gray-200 text-gray-700 text-sm font-semibold px-2.5 py-0.5 rounded">
+              Brand: {order.brand}
+            </span>
+          </div>
+
+          <div
+            onClick={() => IsAllowedRating(order._id, ratingValue)}
+            className="cursor-pointer bg-gray-100 p-4 rounded-md shadow-inner"
+          >
+            <p className="text-lg font-serif text-gray-800">
+              {isAllowdornot ? `You Gave ${ratingValue} ⭐` : "Rate This Product"}
+            </p>
+            <BasicRating value={ratingValue} setValue={setRatingValue} />
+          </div>
+
+          <button
+            className="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+            onClick={handelCart}
+          >
+            Add to Cart
+          </button>
+        </div>
+      </div>
     </div>
   );
-};
+}
 
 export default Order;
