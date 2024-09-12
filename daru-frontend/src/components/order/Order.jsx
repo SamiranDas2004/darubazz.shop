@@ -67,7 +67,7 @@ function Order() {
     const token = localStorage.getItem("token");
   
     if (!token) {
-      console.log("User must be logged in");
+      toast.error("User must be logged in");
       return;
     }
   
